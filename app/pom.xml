@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>de.joerghoh.cq5.healthstatus</groupId>
+        <artifactId>parent</artifactId>
+        <relativePath>../parent/pom.xml</relativePath>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>app</artifactId>
+    <packaging>content-package</packaging>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>de.joerghoh.cq5.healthstatus.core</groupId>
+            <artifactId>core</artifactId>
+            <version>${project.version}</version>                        
+        </dependency>
+        <!-- add additional dependencies -->
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>${basedir}/META-INF</directory>
+                <targetPath>../vault-work/META-INF</targetPath>
+            </resource>
+            <resource>
+                <directory>${basedir}/jcr_root</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>**/.vlt</exclude>
+                    <exclude>**/.vltignore</exclude>
+                    <exclude>**/*.iml</exclude>
+                    <exclude>**/.classpath</exclude>
+                    <exclude>**/.project</exclude>
+                    <exclude>**/.DS_Store</exclude>
+                    <exclude>**/target/**</exclude>
+                    <exclude>libs/**</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        
+        <plugins>
+
+            <plugin>
+                <groupId>com.day.jcr.vault</groupId>
+                <artifactId>maven-vault-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <group>HealthCheck</group>
+                    <requiresRoot>true</requiresRoot>
+
+                    <install>true</install>
+                    <verbose>true</verbose>
+
+                    <packageFile>${project.build.directory}/${project.artifactId}-${project.version}.zip</packageFile>
+
+                    <version>${project.version}</version>
+                    <properties>
+                        <acHandling>overwrite</acHandling>
+                    </properties>
+
+                    <embeddeds>
+                        <embedded>
+                            <groupId>de.joerghoh.cq5.healthstatus.core</groupId>
+                            <artifactId>core</artifactId>
+                            <target>/apps/healthcheck/install</target>
+                        </embedded>
+                    </embeddeds>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>installPackages</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.day.jcr.vault</groupId>
+                        <artifactId>maven-vault-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>install-package</id>
+                                <goals>
+                                    <goal>install</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <groupId>de.joerghoh.cq5.healthstatus.app</groupId>
+    <name>Healthstatus application package</name>
+</project>

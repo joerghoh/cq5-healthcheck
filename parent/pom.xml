@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>de.joerghoh.cq5</groupId>
+        <artifactId>reactor</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>parent</artifactId>
+    <packaging>pom</packaging>
+    <name>Sample Parent Project</name>
+    <properties>
+        <file.encoding>utf-8</file.encoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <version>2.1.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-scr-plugin</artifactId>
+                    <version>1.7.2</version>
+                    <extensions>true</extensions>
+                    <executions>
+                        <execution>
+                            <id>scr</id>
+                            <goals>
+                                <goal>scr</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <!-- Sling plugin dependency and config -->
+                <plugin>
+                    <groupId>org.apache.sling</groupId>
+                    <artifactId>maven-sling-plugin</artifactId>
+                    <version>2.1.0</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <usePut>true</usePut>
+                        <user>${depl.user}</user>
+                        <password>${depl.password}</password>
+                        <slingUrl>http://${depl.host}:${depl.port}/crx/repository/crx.default</slingUrl>
+                        <slingUrlSuffix>/apps/healthcheck/install/</slingUrlSuffix>
+                    </configuration>
+                </plugin>
+                <!-- VLT plugin dependency and config -->
+                <plugin>
+                    <groupId>com.day.jcr.vault</groupId>
+                    <artifactId>maven-vault-plugin</artifactId>
+                    <version>0.0.10</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <group>Sample</group>
+                        <requiresRoot>true</requiresRoot>
+                        <install>true</install>
+                        <verbose>true</verbose>
+                        <packageFile>${project.build.directory}/${project.artifactId}-${project.version}.zip
+                        </packageFile>
+                        <version>${project.version}</version>
+                        <properties>
+                            <acHandling>overwrite</acHandling>
+                        </properties>
+                        <userId>${depl.user}</userId>
+                        <password>${depl.password}</password>
+                        <targetURL>http://${depl.host}:${depl.port}/crx/packmgr/service.jsp</targetURL>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    <dependencyManagement>
+        <dependencies>
+            <!-- CQ Dependencies -->
+            <dependency>
+                <groupId>com.day.cq.wcm</groupId>
+                <artifactId>cq-wcm-api</artifactId>
+                <version>5.5.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- OSGI Dependencies -->
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.scr.annotations</artifactId>
+                <version>1.6.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.compendium</artifactId>
+                <version>4.1.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.core</artifactId>
+                <version>4.1.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- Test dependencies -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.8.2</version>
+                <scope>provided</scope>
+            </dependency>
+		    <!-- add additional dependencies as required -->
+		    <dependency>
+		    	<groupId>org.apache.felix</groupId>
+		    	<artifactId>org.osgi.service.obr</artifactId>
+		    	<version>1.0.2</version>
+		    </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <groupId>de.joerghoh.cq5.healthstatus</groupId>
+    
+</project>

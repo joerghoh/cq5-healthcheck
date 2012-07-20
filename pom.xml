@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>de.joerghoh.cq5</groupId>
+	<artifactId>reactor</artifactId>
+	<packaging>pom</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<name>Sample Project Reactor</name>
+
+	<!-- settings for local deployment -->
+	<properties>
+		<depl.user>admin</depl.user>
+		<depl.password>admin</depl.password>
+		<depl.host>localhost</depl.host>
+		<depl.port>4502</depl.port>
+	</properties>
+
+	<modules>
+		<module>parent</module>
+		<module>core</module>
+		<module>app</module>
+	</modules>
+
+	<repositories>
+		<repository>
+			<id>adobe-public-releases</id>
+			<name>Adobe Public Repository</name>
+			<url>http://repo.adobe.com/nexus/content/groups/public</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>central</id>
+			<name>Maven Repository Switchboard</name>
+			<url>http://repo1.maven.org/maven2</url>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>adobe-public-releases</id>
+			<name>Adobe Basel Public Repository</name>
+			<url>http://repo.adobe.com/nexus/content/groups/public</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<profiles>
+		<!-- profile for deployment to shared development instance -->
+		<profile>
+			<id>devDeploy</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<depl.user>admin</depl.user>
+				<depl.password>admin</depl.password>
+				<depl.host>IP_OF_DEV_SERVER</depl.host>
+				<depl.port>4502</depl.port>
+			</properties>
+		</profile>
+
+		<!-- add additional profiles here -->
+
+	</profiles>
+</project>
