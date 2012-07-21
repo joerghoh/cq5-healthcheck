@@ -60,7 +60,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Bundle-Category>hoc</Bundle-Category>
+						<Bundle-Category>custom</Bundle-Category>
 						<Include-Resource>
 							{maven-resources}
 						</Include-Resource>
