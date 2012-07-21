@@ -98,11 +98,7 @@ public class ReplicationAgentStatusFactory {
     private ServiceRegistration registerService (ReplicationAgentStatusProvider service, Dictionary<String,String> params) {
     	return bundleContext.registerService(HealthStatusProvider.class.getName(), service, params);
     }
-    
-    private void unregisterService (ReplicationAgentStatusProvider service) {
-    	
-    }
-    
+
     
     // private stuff
     
