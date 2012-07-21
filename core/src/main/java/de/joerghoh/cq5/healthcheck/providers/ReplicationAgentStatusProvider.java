@@ -1,12 +1,9 @@
 package de.joerghoh.cq5.healthcheck.providers;
 
-import java.lang.management.ManagementFactory;
-
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
 import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
@@ -17,6 +14,11 @@ import org.slf4j.LoggerFactory;
 import de.joerghoh.cq5.healthcheck.HealthStatus;
 import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
 
+/**
+ * Checks the state of a replication agent MBean
+ * @author joerg
+ *
+ */
 public class ReplicationAgentStatusProvider implements HealthStatusProvider {
 
 	Logger log = LoggerFactory.getLogger(ReplicationAgentStatusProvider.class);
@@ -28,6 +30,9 @@ public class ReplicationAgentStatusProvider implements HealthStatusProvider {
 		this.server = server;
 	}
 	
+	/**
+	 * Return the healthstatus of the agent
+	 */
 	public HealthStatus getHealthStatus() {
 		String providerName = "Replication Agent " + getAgentName();
 		return new HealthStatus (HS_OK,"Alles in Ordnung",providerName);
