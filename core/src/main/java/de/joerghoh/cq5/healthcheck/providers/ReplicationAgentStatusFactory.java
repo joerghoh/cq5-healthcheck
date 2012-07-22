@@ -27,6 +27,12 @@ import org.slf4j.LoggerFactory;
 
 import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
 
+/**
+ * Check the available replication agents via JMX and create a ReplicationAgentStatusProvider for each agent.
+ * @author joerg
+ *
+ * TODO: dynamic detection of new/removed agents
+ */
 @Component(immediate=true)
 public class ReplicationAgentStatusFactory {
     
@@ -54,8 +60,8 @@ public class ReplicationAgentStatusFactory {
                 String agentName = getAgentName (agent);
                 
                 Dictionary<String,String> params = new Hashtable<String,String>();
-                params.put(Constants.SERVICE_PID, agentName);
-                params.put(Constants.SERVICE_DESCRIPTION, "replication agent : " + agentName);
+                params.put(Constants.SERVICE_PID, this.getClass().getName() + "." + agentName);
+                params.put(Constants.SERVICE_DESCRIPTION, "StatusProvider for replication agent " + agentName);
                 
                 ReplicationAgentStatusProvider rasp = new ReplicationAgentStatusProvider (server, agent);
                 
