@@ -30,8 +30,7 @@
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.osgi.service.obr</artifactId>
 			<scope>provided</scope>
-			<version>1.0.2</version>
-		</dependency>
+			</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
