@@ -1,4 +1,4 @@
-package de.joerghoh.cq5.healthcheck.providers;
+package de.joerghoh.cq5.healthcheck.providers.replication;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
@@ -58,12 +58,17 @@ public class ReplicationAgentStatusFactory {
                 log.info("registering service for agent " + agent.toString());
                 
                 String agentName = getAgentName (agent);
+                String pid = this.getClass().getName() + "." + agentName;
                 
                 Dictionary<String,String> params = new Hashtable<String,String>();
-                params.put(Constants.SERVICE_PID, this.getClass().getName() + "." + agentName);
+                params.put(Constants.SERVICE_PID, pid );
                 params.put(Constants.SERVICE_DESCRIPTION, "StatusProvider for replication agent " + agentName);
                 
-                ReplicationAgentStatusProvider rasp = new ReplicationAgentStatusProvider (server, agent);
+                ReplicationAgentStatusOptions opt = new ReplicationAgentStatusOptions();
+                opt.setMbeanServer(server);
+                opt.setObjectName(agent);
+                opt.setPid(pid);
+                ReplicationAgentStatusProvider rasp = new ReplicationAgentStatusProvider (opt);
                 
                 ServiceRegistration sr = registerService (rasp,params);
                 registeredServices.add(sr);

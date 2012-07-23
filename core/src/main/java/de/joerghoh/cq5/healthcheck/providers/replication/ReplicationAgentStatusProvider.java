@@ -1,4 +1,4 @@
-package de.joerghoh.cq5.healthcheck.providers;
+package de.joerghoh.cq5.healthcheck.providers.replication;
 
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import de.joerghoh.cq5.healthcheck.HealthStatus;
 import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
+import de.joerghoh.cq5.healthcheck.providers.MBeanStatusException;
 
 /**
  * Checks the state of a replication agent MBean
@@ -22,35 +23,44 @@ import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
 public class ReplicationAgentStatusProvider implements HealthStatusProvider {
 
 	Logger log = LoggerFactory.getLogger(ReplicationAgentStatusProvider.class);
-	ObjectName mbean;
-	MBeanServer server;
+
+	private ReplicationAgentStatusOptions options;
 	
-	protected ReplicationAgentStatusProvider (MBeanServer server, ObjectName mbeanName) {
-		mbean = mbeanName;
-		this.server = server;
+
+	
+	protected ReplicationAgentStatusProvider (ReplicationAgentStatusOptions options) {
+		this.options = options;
 	}
 	
 	/**
 	 * Return the healthstatus of the agent
 	 */
 	public HealthStatus getHealthStatus() {
-		String providerName = "Replication Agent " + getAgentName();
-		return new HealthStatus (HS_OK,"Alles in Ordnung",providerName);
+		String message = "okok";
+		String providerName = this.getClass().getName();
+		int status = HS_OK;
+		try {
+			providerName = "Replication Agent " + getAgentName();
+		} catch (MBeanStatusException e) {
+			status = HS_WARN;
+		}
+		
+		return new HealthStatus (status,message,providerName);
 	}
 	
 	@org.apache.felix.scr.annotations.Activate
 	protected void Activate (ComponentContext ctx) {
-		log.info ("Activating " + mbean.toString());
+		log.info ("Activating " + options.getObjectName().toString());
 	}
 	
 	@org.apache.felix.scr.annotations.Deactivate
 	protected void Deactivate (ComponentContext ctx) {
-		log.info ("Dectivating " + mbean.toString());
+		log.info ("Dectivating " + options.getObjectName().toString());
 	}
 
 	// private
 	
-	private long getQueueLength() {
+	private long getQueueLength() throws MBeanStatusException {
 		Object r = getValue ("QueueNumEntries");
 		if (r != null) {
 			return (Long) r;
@@ -60,7 +70,7 @@ public class ReplicationAgentStatusProvider implements HealthStatusProvider {
 	}
 	
 	
-	private String getAgentName () {
+	private String getAgentName () throws MBeanStatusException {
 		Object r = getValue ("Id");
 		if (r != null) {
 			return (String ) r;
@@ -71,22 +81,18 @@ public class ReplicationAgentStatusProvider implements HealthStatusProvider {
 	}
 	
 	
-	private Object getValue (String property) {
+	private Object getValue (String property) throws MBeanStatusException {
        Object result = null;
 		try {
-			result =  server.getAttribute (mbean, property);
-		} catch (AttributeNotFoundException e) {
+			result =  options.getMbeanServer().getAttribute (options.getObjectName(), property);
+		} catch (Exception e) {
 			log.error("Cannot read property %s from MBean",property,e);
-		} catch (InstanceNotFoundException e) {
-			log.error("Cannot read property %s from MBean",property,e);
-		} catch (MBeanException e) {
-			log.error("Cannot read property %s from MBean",property,e);
-		} catch (ReflectionException e) {
-			log.error("Cannot read property %s from MBean",property,e);
+			throw new MBeanStatusException(e.getMessage());
 		}
 		return result;
 	}
        
+
 	
 	
 }
