@@ -16,18 +16,24 @@ import de.joerghoh.cq5.healthcheck.HealthStatus;
 import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
 
 /**
- * This service checks if all non-fragment bundles are up; if at least 1 bundle is not 
- * active, the status WARN is reported
+ * This service checks that the configured number of bundles is active
  * @author joerg
  *
  */
-@Component
+@Component(
+		immediate=true,
+		metatype=true,
+		description="Bundle status provider",
+		name="Healthcheck bundle status provider"
+	)
 @Service (value=HealthStatusProvider.class)
 public class BundleStatusProvider implements HealthStatusProvider {
 
 	
 	private static final int DEFAULT_NO_ACTIVE_BUNDLES = 238;
-	@Property (intValue=DEFAULT_NO_ACTIVE_BUNDLES)
+	@Property (intValue=DEFAULT_NO_ACTIVE_BUNDLES,
+			name="Expected number of active bundles",
+			description="The total number of bundles which are expected to be in active state. Fragment bundles are not counted")
 	private static final String NO_ACTIVE_BUNDLES = "active.bundles";
 	
 	private int activeBundlesMatch;
@@ -43,11 +49,9 @@ public class BundleStatusProvider implements HealthStatusProvider {
 			 boolean isFragment = (headers.get("Fragment-Host") != null);
 			 boolean isActive = (b.getState() == Bundle.ACTIVE);
 			 
-			 
 			 if (!isFragment && isActive) {
 				 activeBundleCount++;
 			 }
-			 
 		 }
 		 
 		 String statusMessage;

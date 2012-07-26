@@ -1,12 +1,5 @@
 package de.joerghoh.cq5.healthcheck.providers.replication;
 
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import javax.management.ReflectionException;
-
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +11,8 @@ import de.joerghoh.cq5.healthcheck.providers.MBeanStatusException;
 /**
  * Checks the state of a replication agent MBean
  * @author joerg
+ * 
+ * TODO: * read agent specific limits via OSGI 
  *
  */
 public class ReplicationAgentStatusProvider implements HealthStatusProvider {
