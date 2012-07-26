@@ -123,6 +123,14 @@
 		    	<version>2.1.0</version>
 		    	<type>bundle</type>
 		    </dependency>
+		    <dependency>
+		    	<groupId>com.adobe.granite</groupId>
+		    	<artifactId>
+		    		com.adobe.granite.jcrclustersupport
+		    	</artifactId>
+		    	<version>0.5.0</version>
+		    	<type>bundle</type>
+		    </dependency>
         </dependencies>
     </dependencyManagement>
     <groupId>de.joerghoh.cq5.healthcheck</groupId>
