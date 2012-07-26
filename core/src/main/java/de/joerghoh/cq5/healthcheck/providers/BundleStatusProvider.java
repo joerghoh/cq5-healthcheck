@@ -6,7 +6,7 @@ import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
-import org.apache.sling.commons.osgi.OsgiUtil;
+import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
@@ -72,7 +72,7 @@ public class BundleStatusProvider implements HealthStatusProvider {
 	@Activate
 	protected void activate (ComponentContext ctx) {
 		bctx = ctx.getBundleContext();
-		activeBundlesMatch = OsgiUtil.toInteger (ctx.getProperties().get(NO_ACTIVE_BUNDLES),DEFAULT_NO_ACTIVE_BUNDLES);
+		activeBundlesMatch = PropertiesUtil.toInteger (ctx.getProperties().get(NO_ACTIVE_BUNDLES),DEFAULT_NO_ACTIVE_BUNDLES);
 	}
 	
 }
