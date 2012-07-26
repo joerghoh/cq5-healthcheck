@@ -7,7 +7,7 @@
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>parent</artifactId>
+    <artifactId>de.joerghoh.cq5.healthcheck.parent</artifactId>
     <packaging>pom</packaging>
     <name>Sample Parent Project</name>
     <properties>
@@ -117,8 +117,14 @@
 		    	<artifactId>org.osgi.service.obr</artifactId>
 		    	<version>1.0.2</version>
 		    </dependency>
+		    <dependency>
+		    	<groupId>org.apache.sling</groupId>
+		    	<artifactId>org.apache.sling.commons.osgi</artifactId>
+		    	<version>2.1.0</version>
+		    	<type>bundle</type>
+		    </dependency>
         </dependencies>
     </dependencyManagement>
-    <groupId>de.joerghoh.cq5.healthstatus</groupId>
+    <groupId>de.joerghoh.cq5.healthcheck</groupId>
     
 </project>

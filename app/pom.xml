@@ -2,13 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>de.joerghoh.cq5.healthstatus</groupId>
-        <artifactId>parent</artifactId>
+        <groupId>de.joerghoh.cq5.healthcheck</groupId>
+        <artifactId>de.joerghoh.cq5.healthcheck.parent</artifactId>
         <relativePath>../parent/pom.xml</relativePath>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>app</artifactId>
     <packaging>content-package</packaging>
 
 
@@ -101,6 +100,7 @@
         </profile>
     </profiles>
 
-    <groupId>de.joerghoh.cq5.healthstatus.app</groupId>
+    <groupId>de.joerghoh.cq5.healthcheck</groupId>
     <name>Healthstatus application package</name>
+    <artifactId>de.joerghoh.cq5.healtcheck.app</artifactId>
 </project>
