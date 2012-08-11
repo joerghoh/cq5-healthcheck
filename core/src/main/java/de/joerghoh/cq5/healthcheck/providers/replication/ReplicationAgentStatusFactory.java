@@ -1,5 +1,6 @@
 package de.joerghoh.cq5.healthcheck.providers.replication;
 
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -18,9 +19,12 @@ import javax.management.ReflectionException;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
+import org.apache.felix.scr.annotations.Reference;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,10 +44,14 @@ public class ReplicationAgentStatusFactory {
     private BundleContext bundleContext;
     private List<ServiceRegistration> registeredServices = new ArrayList<ServiceRegistration>(5);
     private MBeanServer server;
+    
+    @Reference
+    private ConfigurationAdmin configurationAdmin;
 
     private static final String queryString = "com.adobe.granite.replication:type=agent,id=*";
     
-    @Activate
+    @SuppressWarnings("unchecked")
+	@Activate
     protected void activate (ComponentContext ctx) {
         
     	bundleContext = ctx.getBundleContext();
@@ -55,7 +63,7 @@ public class ReplicationAgentStatusFactory {
             log.error ("Found " + agents.size() + " agents");
             
             for (ObjectName agent: agents) {
-                log.info("registering service for agent " + agent.toString());
+                //log.info("registering service for agent " + agent.toString());
                 
                 String agentName = getAgentName (agent);
                 String pid = this.getClass().getName() + "." + agentName;
@@ -64,10 +72,21 @@ public class ReplicationAgentStatusFactory {
                 params.put(Constants.SERVICE_PID, pid );
                 params.put(Constants.SERVICE_DESCRIPTION, "StatusProvider for replication agent " + agentName);
                 
+                Configuration config = configurationAdmin.getConfiguration(pid,null);
+                Dictionary properties;
+                if (config != null && config.getProperties() != null) {
+                	properties = config.getProperties();
+                } else {
+                	properties = new Hashtable();
+                	properties.put(ReplicationAgentStatusUtil.QUEUE_ERROR_LENGTH, "1000");
+                	properties.put(ReplicationAgentStatusUtil.QUEUE_WARN_LENGTH,"100");
+                }
+                
                 ReplicationAgentStatusOptions opt = new ReplicationAgentStatusOptions();
                 opt.setMbeanServer(server);
                 opt.setObjectName(agent);
                 opt.setPid(pid);
+                opt.setProperties(properties);
                 ReplicationAgentStatusProvider rasp = new ReplicationAgentStatusProvider (opt);
                 
                 ServiceRegistration sr = registerService (rasp,params);
@@ -91,6 +110,10 @@ public class ReplicationAgentStatusFactory {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ReflectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// thrown by access to configuration admin
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
