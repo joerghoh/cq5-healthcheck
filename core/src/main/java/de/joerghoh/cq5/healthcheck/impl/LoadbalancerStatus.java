@@ -63,28 +63,28 @@ public class LoadbalancerStatus extends SlingSafeMethodsServlet implements Clust
 	private static final long serialVersionUID = -8012558085365805331L;
 	
 	public void doGet (SlingHttpServletRequest request, SlingHttpServletResponse response) {
-		
+
 		try {
-		String systemStatusString = statusService.getOverallStatus().getStatus();
-		boolean allOK = systemStatusString.equals("OK");
-		boolean statusOK = false;
-		
-		if (loadbalancerStrategy.equals("ActivePassive")) {
-			statusOK = iAmMaster & allOK;
-		} else if (loadbalancerStrategy.equals("ActiveActive")) {
-			statusOK = allOK;
-		} else {
-			statusOK = false;
-			log.error ("Invalid loadbalancer strategy set: " + loadbalancerStrategy);
-		}
-		
-		response.setContentType("text/html");
-		if (statusOK) {
-			response.getOutputStream().print("OK");
-		} else {
-			response.getOutputStream().print("NotOK");
-		}
-		response.getOutputStream().flush();
+			String systemStatusString = statusService.getOverallStatus().getStatus();
+			boolean allOK = systemStatusString.equals("OK");
+			boolean statusOK = false;
+
+			if (loadbalancerStrategy.equals("ActivePassive")) {
+				statusOK = iAmMaster & allOK;
+			} else if (loadbalancerStrategy.equals("ActiveActive")) {
+				statusOK = allOK;
+			} else {
+				statusOK = false;
+				log.error ("Invalid loadbalancer strategy set: " + loadbalancerStrategy);
+			}
+
+			response.setContentType("text/html");
+			if (statusOK) {
+				response.getOutputStream().print("OK");
+			} else {
+				response.getOutputStream().print("NotOK");
+			}
+			response.getOutputStream().flush();
 		} catch (IOException e)  {
 			log.warn("Cannot write to output: " + e.getMessage());
 		}
