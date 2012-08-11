@@ -1,8 +1,9 @@
 
-import java.io.IOException;
+
 
 package de.joerghoh.cq5.healthcheck.impl;
 
+import java.io.IOException;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
