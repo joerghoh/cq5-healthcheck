@@ -13,7 +13,7 @@ public class SampleProvider implements HealthStatusProvider {
 
 	public HealthStatus getHealthStatus() {
 		
-		return new HealthStatus (HS_OK,"Everything's fine",this.getClass().getName());
+		return new HealthStatus (OK,"Everything's fine",this.getClass().getName());
 	}
 	
 

@@ -41,19 +41,19 @@ public class ReplicationAgentStatusProvider implements HealthStatusProvider {
 		queueError = Integer.parseInt ((String) options.getProperties().get(ReplicationAgentStatusUtil.QUEUE_ERROR_LENGTH));
 		String message = "okok";
 		String providerName = this.getClass().getName();
-		int status = HS_OK;
+		int status = OK;
 		try {
 			providerName = "Replication Agent " + getAgentName();
 			long len = getQueueLength();
 			if (len > queueWarn) {
-				status = HS_WARN;
+				status = WARN;
 			}
 			if (len > queueError) {
-				status = HS_ERROR;
+				status = CRITICAL;
 			}
 		} catch (MBeanStatusException e) {
 			log.warn ("Cannot determine correct replication agent state: ",e);
-			status = HS_WARN;
+			status = WARN;
 		}
 		log.debug ("Checking "+ options.getObjectName().toString() + "queueError="+queueError+",queueWarn="+queueWarn);
 		return new HealthStatus (status,message,providerName);

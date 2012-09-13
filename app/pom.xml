@@ -50,6 +50,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <group>HealthCheck</group>
+                    <name>healthcheck</name>
                     <requiresRoot>true</requiresRoot>
 
                     <install>true</install>

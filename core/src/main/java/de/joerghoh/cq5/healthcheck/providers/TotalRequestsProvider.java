@@ -15,7 +15,7 @@ public class TotalRequestsProvider extends AbstractMBeanProvider{
         
         long req = getMBeanLongValue("org.apache.sling:type=engine,service=RequestProcessor","RequestsCount");
         
-        return new HealthStatus (HS_OK,"Requests:" + req,TotalRequestsProvider.class.getName());
+        return new HealthStatus (OK,"Requests:" + req,TotalRequestsProvider.class.getName());
     }
 
 }

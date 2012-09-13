@@ -22,10 +22,10 @@ public class OverallHealthStatus {
 
 	public String getStatus() {
 		switch (status) {
-			case de.joerghoh.cq5.healthcheck.HealthStatusProvider.HS_OK: return "OK"; 
-			case de.joerghoh.cq5.healthcheck.HealthStatusProvider.HS_WARN: return "WARN"; 
-			case de.joerghoh.cq5.healthcheck.HealthStatusProvider.HS_ERROR: return "ERROR";
-			default: log.error("Invalid status: " + status); return "ERROR";
+			case de.joerghoh.cq5.healthcheck.HealthStatusProvider.OK: return "OK"; 
+			case de.joerghoh.cq5.healthcheck.HealthStatusProvider.WARN: return "WARN"; 
+			case de.joerghoh.cq5.healthcheck.HealthStatusProvider.CRITICAL: return "CRITICAL";
+			default: log.error("Invalid status: " + status); return "UNKNOWN";
 		}
 	}
 	

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0" localization="OSGI-INF/metatype/metatype">
+    <OCD id="de.joerghoh.cq5.healthcheck.impl.HealthStatusServiceImpl" name="%de.joerghoh.cq5.healthcheck.impl.HealthStatusServiceImpl.name" description="%de.joerghoh.cq5.healthcheck.impl.HealthStatusServiceImpl.description"/>
+    <OCD id="de.joerghoh.cq5.healthcheck.jmx.RequestCounter" name="%de.joerghoh.cq5.healthcheck.jmx.RequestCounter.name" description="%de.joerghoh.cq5.healthcheck.jmx.RequestCounter.description">
+        <AD id="jmx.objectname" type="String" default="sample.jmx:id='requestCounter'" name="%jmx.objectname.name" description="%jmx.objectname.description"/>
+        <AD id="pattern" type="String" default="/.*" name="%pattern.name" description="%pattern.description"/>
+    </OCD>
+    <OCD id="Healthcheck bundle status provider" name="%Healthcheck bundle status provider.name" description="Bundle status provider">
+        <AD id="Expected number of active bundles" type="Integer" default="238" name="%Expected number of active bundles.name" description="The total number of bundles which are expected to be in active state. Fragment bundles are not counted"/>
+    </OCD>
+    <OCD id="de.joerghoh.cq5.healthcheck.impl.LoadbalancerStatus" name="%de.joerghoh.cq5.healthcheck.impl.LoadbalancerStatus.name" description="%de.joerghoh.cq5.healthcheck.impl.LoadbalancerStatus.description">
+        <AD id="sling.servlet.methods" type="String" default="GET" name="%sling.servlet.methods.name" description="%sling.servlet.methods.description"/>
+        <AD id="sling.servlet.paths" type="String" default="/bin/loadbalancer" name="%sling.servlet.paths.name" description="%sling.servlet.paths.description"/>
+        <AD id="Clustering strategy" type="String" default="ActivePassive" name="%Clustering strategy.name" description="Specify your clustering strategy to instruct the loadbalancer. Currently 'ActivePassive' and 'ActiveActive' are supported."/>
+    </OCD>
+    <Designate pid="de.joerghoh.cq5.healthcheck.impl.HealthStatusServiceImpl">
+        <Object ocdref="de.joerghoh.cq5.healthcheck.impl.HealthStatusServiceImpl"/>
+    </Designate>
+    <Designate pid="de.joerghoh.cq5.healthcheck.jmx.RequestCounter">
+        <Object ocdref="de.joerghoh.cq5.healthcheck.jmx.RequestCounter"/>
+    </Designate>
+    <Designate pid="Healthcheck bundle status provider">
+        <Object ocdref="Healthcheck bundle status provider"/>
+    </Designate>
+    <Designate pid="de.joerghoh.cq5.healthcheck.impl.LoadbalancerStatus">
+        <Object ocdref="de.joerghoh.cq5.healthcheck.impl.LoadbalancerStatus"/>
+    </Designate>
+</metatype:MetaData>

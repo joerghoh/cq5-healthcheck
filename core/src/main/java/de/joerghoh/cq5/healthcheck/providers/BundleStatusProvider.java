@@ -57,10 +57,10 @@ public class BundleStatusProvider implements HealthStatusProvider {
 		 String statusMessage;
 		 int status;
 		 if (activeBundleCount == activeBundlesMatch) {
-			 status = HS_OK;
+			 status = OK;
 			 statusMessage = "all bundles active";
 		 } else {
-			 status = HS_WARN;
+			 status = WARN;
 			 statusMessage = activeBundleCount + " bundles active ("+activeBundlesMatch + " expected)";
 		 }
 		 

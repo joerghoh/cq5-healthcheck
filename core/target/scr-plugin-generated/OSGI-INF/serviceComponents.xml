@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0">
+    <scr:component enabled="true" immediate="true" name="de.joerghoh.cq5.healthcheck.impl.HealthStatusServiceImpl">
+        <implementation class="de.joerghoh.cq5.healthcheck.impl.HealthStatusServiceImpl"/>
+        <service servicefactory="false">
+            <provide interface="de.joerghoh.cq5.healthcheck.HealthStatusService"/>
+        </service>
+        <property name="service.pid" value="de.joerghoh.cq5.healthcheck.impl.HealthStatusServiceImpl"/>
+    </scr:component>
+    <scr:component enabled="true" immediate="true" name="de.joerghoh.cq5.healthcheck.jmx.RequestCounter">
+        <implementation class="de.joerghoh.cq5.healthcheck.jmx.RequestCounter"/>
+        <service servicefactory="false">
+            <provide interface="javax.servlet.Filter"/>
+            <provide interface="de.joerghoh.cq5.healthcheck.jmx.RequestCounterMBean"/>
+        </service>
+        <property name="jmx.objectname" type="String" value="sample.jmx:id='requestCounter'"/>
+        <property name="pattern" type="String" value="/.*"/>
+        <property name="service.pid" value="de.joerghoh.cq5.healthcheck.jmx.RequestCounter"/>
+    </scr:component>
+    <scr:component enabled="true" immediate="true" name="Healthcheck bundle status provider" activate="activate">
+        <implementation class="de.joerghoh.cq5.healthcheck.providers.BundleStatusProvider"/>
+        <service servicefactory="false">
+            <provide interface="de.joerghoh.cq5.healthcheck.HealthStatusProvider"/>
+        </service>
+        <property name="Expected number of active bundles" type="Integer" value="238"/>
+        <property name="service.pid" value="Healthcheck bundle status provider"/>
+    </scr:component>
+    <scr:component enabled="true" immediate="true" name="de.joerghoh.cq5.healthcheck.providers.SampleProvider">
+        <implementation class="de.joerghoh.cq5.healthcheck.providers.SampleProvider"/>
+        <service servicefactory="false">
+            <provide interface="de.joerghoh.cq5.healthcheck.HealthStatusProvider"/>
+        </service>
+        <property name="service.pid" value="de.joerghoh.cq5.healthcheck.providers.SampleProvider"/>
+    </scr:component>
+    <scr:component enabled="true" immediate="true" name="de.joerghoh.cq5.healthcheck.providers.replication.ReplicationAgentStatusFactory" activate="activate" deactivate="deactivate">
+        <implementation class="de.joerghoh.cq5.healthcheck.providers.replication.ReplicationAgentStatusFactory"/>
+        <property name="service.pid" value="de.joerghoh.cq5.healthcheck.providers.replication.ReplicationAgentStatusFactory"/>
+        <reference name="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin" cardinality="1..1" policy="static" bind="bindConfigurationAdmin" unbind="unbindConfigurationAdmin"/>
+    </scr:component>
+    <scr:component enabled="true" immediate="true" name="de.joerghoh.cq5.healthcheck.providers.TotalRequestsProvider">
+        <implementation class="de.joerghoh.cq5.healthcheck.providers.TotalRequestsProvider"/>
+        <service servicefactory="false">
+            <provide interface="de.joerghoh.cq5.healthcheck.HealthStatusProvider"/>
+        </service>
+        <property name="service.pid" value="de.joerghoh.cq5.healthcheck.providers.TotalRequestsProvider"/>
+    </scr:component>
+    <scr:component enabled="true" immediate="true" name="de.joerghoh.cq5.healthcheck.impl.LoadbalancerStatus" activate="Activate">
+        <implementation class="de.joerghoh.cq5.healthcheck.impl.LoadbalancerStatus"/>
+        <service servicefactory="false">
+            <provide interface="javax.servlet.Servlet"/>
+        </service>
+        <property name="sling.servlet.methods" type="String" value="GET"/>
+        <property name="sling.servlet.paths" type="String" value="/bin/loadbalancer"/>
+        <property name="Clustering strategy" type="String" value="ActivePassive"/>
+        <property name="service.pid" value="de.joerghoh.cq5.healthcheck.impl.LoadbalancerStatus"/>
+        <reference name="statusService" interface="de.joerghoh.cq5.healthcheck.HealthStatusService" cardinality="1..1" policy="static" bind="bindStatusService" unbind="unbindStatusService"/>
+    </scr:component>
+</components>

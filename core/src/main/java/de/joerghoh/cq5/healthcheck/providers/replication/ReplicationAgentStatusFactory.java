@@ -72,15 +72,8 @@ public class ReplicationAgentStatusFactory {
                 params.put(Constants.SERVICE_PID, pid );
                 params.put(Constants.SERVICE_DESCRIPTION, "StatusProvider for replication agent " + agentName);
                 
-                Configuration config = configurationAdmin.getConfiguration(pid,null);
-                Dictionary properties;
-                if (config != null && config.getProperties() != null) {
-                	properties = config.getProperties();
-                } else {
-                	properties = new Hashtable();
-                	properties.put(ReplicationAgentStatusUtil.QUEUE_ERROR_LENGTH, "1000");
-                	properties.put(ReplicationAgentStatusUtil.QUEUE_WARN_LENGTH,"100");
-                }
+                
+                Dictionary properties = buildProperties(pid);
                 
                 ReplicationAgentStatusOptions opt = new ReplicationAgentStatusOptions();
                 opt.setMbeanServer(server);
@@ -119,6 +112,19 @@ public class ReplicationAgentStatusFactory {
 		}
         
     }
+
+	private Dictionary buildProperties(String pid) throws IOException {
+		Configuration config = configurationAdmin.getConfiguration(pid,null);
+		Dictionary properties;
+		if (config != null && config.getProperties() != null) {
+			properties = config.getProperties();
+		} else {
+			properties = new Hashtable();
+			properties.put(ReplicationAgentStatusUtil.QUEUE_ERROR_LENGTH, "1000");
+			properties.put(ReplicationAgentStatusUtil.QUEUE_WARN_LENGTH,"100");
+		}
+		return properties;
+	}
     
     @Deactivate
     protected void deactivate (ComponentContext ctx) {
