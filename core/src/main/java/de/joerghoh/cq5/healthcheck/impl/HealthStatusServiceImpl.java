@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.ReferenceCardinality;
+import org.apache.felix.scr.annotations.ReferencePolicy;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
@@ -24,10 +27,10 @@ import de.joerghoh.cq5.healthcheck.OverallHealthStatus;
  */
 @Component(metatype=true,immediate=true)
 @Service(value=HealthStatusService.class)
+@Reference(name="healthStatusProvider",referenceInterface=HealthStatusProvider.class,cardinality=ReferenceCardinality.OPTIONAL_MULTIPLE, policy=ReferencePolicy.DYNAMIC)
 public class HealthStatusServiceImpl implements HealthStatusService {
 
-	 private HealthStatusProvider[] providers = new HealthStatusProvider[0];
-	 private HealthStatusTracker tracker;
+	 private List<HealthStatusProvider> providers = new ArrayList<HealthStatusProvider>();
 	 private final Logger log = LoggerFactory.getLogger(HealthStatusServiceImpl.class);
     
 	 
@@ -38,19 +41,9 @@ public class HealthStatusServiceImpl implements HealthStatusService {
 		
 		 int finalStatus = 0;
 		 List<HealthStatus> results = new ArrayList<HealthStatus>(10);
+		
 		 
-		 /** first create a copy of the provider list, it might change over time,
-		  *  while we still query the HealthStatusProviders.
-		  *  **/
-		 HealthStatusProvider[] copy;
-		 synchronized (this) {
-			 copy = new HealthStatusProvider[providers.length];
-			 for (int i=0; i<providers.length;i++) {
-				 copy[i] = providers[i];
-			 }
-		 }
-		 
-		 for (HealthStatusProvider p: copy) {
+		 for (HealthStatusProvider p: providers) {
 			 HealthStatus s = p.getHealthStatus();
 			 if (s.getStatus() > finalStatus) {
 				 finalStatus = s.getStatus();
@@ -65,76 +58,15 @@ public class HealthStatusServiceImpl implements HealthStatusService {
 	 
 	 
 	 /** helper routines**/
-	
-	 /**
-	  * add a new HealthStatusProvider
-	  * @param provider
-	  * called only by the internal HealthStatusTracker
-	  */
-	 protected synchronized void addProvider (HealthStatusProvider provider) {
-		 ArrayList<HealthStatusProvider> p = new ArrayList<HealthStatusProvider>(
-				 Arrays.asList(providers));
-		 p.add(provider);
-		 providers = p.toArray(new HealthStatusProvider[p.size()]);
+	 
+	 protected void bindHealthStatusProvider (HealthStatusProvider provider) {
+		 providers.add(provider);
 	 }
 	 
-	 /**
-	  * remove a HealthStatusProvider
-	  * @param provider
-	  * called only the internal HealthStatusTracker
-	  */
-	 protected synchronized void removeProvider (HealthStatusProvider provider) {
-		 ArrayList<HealthStatusProvider> p = new ArrayList<HealthStatusProvider>(
-				 Arrays.asList(providers));
-		 p.remove(provider);
-		 providers = p.toArray(new HealthStatusProvider[p.size()]);   
+	 protected void unbindHealthStatusProvider (HealthStatusProvider provider) {
+		 providers.remove(provider);
 	 }
+	
 
-	/** SCR **/
-	
-	protected void activate (ComponentContext ctx) {
-		tracker = new HealthStatusTracker(ctx,this);
-		tracker.open();
-		log.info("HealthStatusServiceImpl activted");
-	}
-	
-	protected void deactivate (ComponentContext ctx) {
-		if (tracker != null) {
-			tracker.close();
-		}
-		tracker = null;
-		
-	}
-	
-	/**
-	 * keep track of all services implementing HealthStatusProvider
-	 * @author joerg
-	 *
-	 */
-	
-	private class HealthStatusTracker extends ServiceTracker {
-		
-		private HealthStatusServiceImpl s;
-		
-		public HealthStatusTracker (ComponentContext ctx, HealthStatusServiceImpl service) {
-			super (ctx.getBundleContext(),HealthStatusProvider.class.getName(),null);
-			s = service;
-		}
-		
-        public Object addingService(ServiceReference reference) {
-            HealthStatusProvider provider = (HealthStatusProvider) super.addingService(reference);
-            s.addProvider (provider);
-            return provider;
-        }
-
-        @Override
-        public void removedService(ServiceReference reference, Object service) {
-            if (service instanceof HealthStatusProvider) {
-                s.removeProvider((HealthStatusProvider) service);
-            }
-            super.removedService(reference, service);
-        }
-		
-	}
 	
 }
