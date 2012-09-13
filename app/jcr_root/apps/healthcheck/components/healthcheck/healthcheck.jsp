@@ -19,7 +19,7 @@
 <%
 	
 	HealthStatusService status = sling.getService(HealthStatusService.class);
-	OverallHealthStatus overall = status.getOverallStatus();
+	SystemHealthStatus overall = status.getOverallStatus();
 	List<HealthStatus> details = overall.getDetails();
 
 %>

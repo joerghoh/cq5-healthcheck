@@ -9,5 +9,5 @@ package de.joerghoh.cq5.healthcheck;
  */
 public interface HealthStatusService {
 
-	public OverallHealthStatus getOverallStatus();
+	public SystemHealthStatus getOverallStatus();
 }

@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import de.joerghoh.cq5.healthcheck.HealthStatus;
 import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
 import de.joerghoh.cq5.healthcheck.HealthStatusService;
-import de.joerghoh.cq5.healthcheck.OverallHealthStatus;
+import de.joerghoh.cq5.healthcheck.SystemHealthStatus;
 
 /**
  * 
@@ -37,7 +37,7 @@ public class HealthStatusServiceImpl implements HealthStatusService {
 	 /**
 	  * Get overall status
 	  */
-	 public OverallHealthStatus getOverallStatus() {
+	 public SystemHealthStatus getOverallStatus() {
 		
 		 int finalStatus = 0;
 		 List<HealthStatus> results = new ArrayList<HealthStatus>(10);
@@ -52,7 +52,7 @@ public class HealthStatusServiceImpl implements HealthStatusService {
 		 }
 		 
 		 log.info("Processed " + results.size() + " providers");
-		 return new OverallHealthStatus (finalStatus,results);
+		 return new SystemHealthStatus (finalStatus,results);
 	 }
 	 
 	 
