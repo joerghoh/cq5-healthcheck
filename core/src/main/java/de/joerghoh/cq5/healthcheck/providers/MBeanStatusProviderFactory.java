@@ -1,38 +1,20 @@
 package de.joerghoh.cq5.healthcheck.providers;
 
 import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.felix.scr.annotations.Activate;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Deactivate;
-import org.apache.felix.scr.annotations.Reference;
-import org.apache.sling.jcr.api.SlingRepository;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
-import org.osgi.framework.ServiceReference;
-import org.osgi.framework.ServiceRegistration;
-import org.osgi.service.component.ComponentContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
-import de.joerghoh.cq5.healthcheck.providers.replication.ReplicationAgentStatusProvider;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Property;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
@@ -40,8 +22,24 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
+import org.apache.felix.scr.annotations.Activate;
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Deactivate;
+import org.apache.felix.scr.annotations.Reference;
+import org.apache.sling.api.SlingConstants;
+import org.apache.sling.jcr.api.SlingRepository;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.component.ComponentContext;
+import org.osgi.service.event.EventHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
+
 @Component(immediate=true)
-public class MBeanStatusProviderFactory implements EventListener {
+public class MBeanStatusProviderFactory implements EventHandler {
 
 	private static String configPath = "/etc/healthcheck/mbeans";
 	private Logger log =  LoggerFactory.getLogger (MBeanStatusProviderFactory.class);
@@ -61,14 +59,6 @@ public class MBeanStatusProviderFactory implements EventListener {
 		try {
 			bundleContext = ctx.getBundleContext();
 			adminSession = repo.loginAdministrative(null);
-			adminSession.getWorkspace().getObservationManager().addEventListener(this,
-					Event.NODE_ADDED | Event.NODE_MOVED | Event.NODE_REMOVED,
-					configPath,
-					true, //isDeep, 
-					null, //uuid, 
-					null, //nodeTypeName, 
-					true //noLocal
-					);
 			initialLoad();
 		} catch (RepositoryException e) {
 			log.error ("Cannot login to repository",e);
@@ -84,12 +74,31 @@ public class MBeanStatusProviderFactory implements EventListener {
 		deactivateAllServices();
 	}
 
-	
-	public void onEvent(EventIterator iter) {
-		while (iter.hasNext()) {
-			Event e = iter.nextEvent();
-		}
-		
+	public void handleEvent(org.osgi.service.event.Event event) {
+		final Object p = event.getProperty(SlingConstants.PROPERTY_PATH);
+        final String path;
+        if (p instanceof String) {
+            path = (String) p;
+        } else {
+            // not a string path or null, ignore this event
+            return;
+        }
+        if (!path.startsWith(configPath)) {
+        	// it happened outside of our interest -- ignore
+        	return;
+        }
+        try {
+        	if (SlingConstants.TOPIC_RESOURCE_ADDED.equals(event.getTopic())) {
+        		createService(adminSession.getNode(path));
+        	} else if (SlingConstants.TOPIC_RESOURCE_CHANGED.equals(event.getTopic())) {
+        		unregisterService(adminSession.getNode(path));
+        		createService(adminSession.getNode(path));
+        	} else if (SlingConstants.TOPIC_RESOURCE_REMOVED.equals(event.getTopic())) {
+        		unregisterService(adminSession.getNode(path));
+        	}
+        } catch (RepositoryException e) {
+        	log.error("Cannot handle event ",e);
+        }	
 	}
 
 	
@@ -122,7 +131,6 @@ public class MBeanStatusProviderFactory implements EventListener {
 			return;
 		}
 
-		String definition = n.getPath();
 		String mbeanName = n.getName().replace("_", ":");
 		ObjectName mbean = null;
 		try {
@@ -136,7 +144,6 @@ public class MBeanStatusProviderFactory implements EventListener {
 			Set<ObjectName> beans = server.queryNames(mbean, null);
 			if (beans.size() == 1) {
 				log.info ("Instantiate healtcheck for MBean "+ mbeanName);
-				String propertyName = n.getProperty("JMXproperty").toString();
 
 				Map<String,Property> props = new HashMap<String,Property>();
 				PropertyIterator pi = n.getProperties();
@@ -173,7 +180,21 @@ public class MBeanStatusProviderFactory implements EventListener {
     		ServiceRegistration sr = i.next();
     		sr.unregister();
     	}
+    	registeredServices.clear();
     }
 	
+    /**
+     * unregister a service defined by a special node
+     * @param definition
+     */
+    private void unregisterService(Node definition) {
+    	ServiceRegistration r = registeredServices.get(definition);
+    	if (r != null) {
+    		r.unregister();
+    		registeredServices.remove(definition);
+    	}
+    }
+
+
 	
 }
