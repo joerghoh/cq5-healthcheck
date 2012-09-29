@@ -8,7 +8,7 @@
 	import="
 	de.joerghoh.cq5.healthcheck.HealthStatusService,
 	de.joerghoh.cq5.healthcheck.HealthStatusProvider,
-	de.joerghoh.cq5.healthcheck.OverallHealthStatus,
+	de.joerghoh.cq5.healthcheck.SystemHealthStatus,
 	de.joerghoh.cq5.healthcheck.HealthStatus,
 	java.util.List"
 %><%@include
@@ -32,10 +32,10 @@
 		<tr><th>Responsible</th><th>Message</th><th>Status</th></tr>
 		<% for (HealthStatus s: details) { 
 			String statusColor = "green";
-			if (s.getStatus() == HealthStatusProvider.HS_WARN) {
+			if (s.getStatus() == HealthStatusProvider.WARN) {
 				statusColor = "yellow";
 			}
-			if (s.getStatus() == HealthStatusProvider.HS_ERROR) {
+			if (s.getStatus() == HealthStatusProvider.CRITICAL) {
 				statusColor = "red";
 			}
 		%>

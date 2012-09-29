@@ -15,9 +15,6 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.observation.Event;
-import javax.jcr.observation.EventIterator;
-import javax.jcr.observation.EventListener;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -27,6 +24,12 @@ import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.sling.api.SlingConstants;
+import org.apache.sling.api.resource.LoginException;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.apache.sling.api.resource.ResourceUtil;
+import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.jcr.api.SlingRepository;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -51,6 +54,10 @@ public class MBeanStatusProviderFactory implements EventHandler {
 	@Reference
 	SlingRepository repo;
 	
+	@Reference
+	ResourceResolverFactory rrfac;
+	ResourceResolver adminResolver;
+	
 	
 	private Session adminSession;
 	
@@ -59,10 +66,13 @@ public class MBeanStatusProviderFactory implements EventHandler {
 		try {
 			bundleContext = ctx.getBundleContext();
 			adminSession = repo.loginAdministrative(null);
+			adminResolver = rrfac.getAdministrativeResourceResolver(null);
 			initialLoad();
 		} catch (RepositoryException e) {
 			log.error ("Cannot login to repository",e);
 			throw new RepositoryException (e);
+		} catch (LoginException e) {
+			log.error ("Cannot login to repository",e);
 		}
 	}
 	
@@ -70,6 +80,9 @@ public class MBeanStatusProviderFactory implements EventHandler {
 	protected void deactivate() {
 		if (adminSession != null) {
 			adminSession.logout();
+		}
+		if (adminResolver != null) {
+			adminResolver.close();
 		}
 		deactivateAllServices();
 	}
@@ -88,13 +101,14 @@ public class MBeanStatusProviderFactory implements EventHandler {
         	return;
         }
         try {
+        	Resource r = adminResolver.getResource(path);
         	if (SlingConstants.TOPIC_RESOURCE_ADDED.equals(event.getTopic())) {
-        		createService(adminSession.getNode(path));
+        		createService(r);
         	} else if (SlingConstants.TOPIC_RESOURCE_CHANGED.equals(event.getTopic())) {
-        		unregisterService(adminSession.getNode(path));
-        		createService(adminSession.getNode(path));
+        		unregisterService(r);
+        		createService(r);
         	} else if (SlingConstants.TOPIC_RESOURCE_REMOVED.equals(event.getTopic())) {
-        		unregisterService(adminSession.getNode(path));
+        		unregisterService(r);
         	}
         } catch (RepositoryException e) {
         	log.error("Cannot handle event ",e);
@@ -103,17 +117,16 @@ public class MBeanStatusProviderFactory implements EventHandler {
 
 	
 	private void initialLoad() throws PathNotFoundException, RepositoryException {
-		loadNodes (adminSession.getNode(configPath));
+		loadNodes (adminResolver.getResource(configPath));
 	}
 	
-	private void loadNodes (Node n) throws RepositoryException {
-		NodeIterator ni = n.getNodes();
-		while (ni.hasNext()) {
-			Node n1 = ni.nextNode();
-			createService (n1);
-			if (n1.hasNodes()) {
-				loadNodes (n1);
-			}
+	private void loadNodes (Resource res) throws RepositoryException {
+		
+		createService (res);
+		Iterator<Resource> children = res.listChildren();
+		while (children.hasNext()) {
+			Resource r = children.next();
+			loadNodes (r);
 		}
 	}
 	
@@ -123,15 +136,17 @@ public class MBeanStatusProviderFactory implements EventHandler {
 	 * @return
 	 * @throws RepositoryException 
 	 */
-	private void createService (Node n) throws RepositoryException {
+	private void createService (Resource resource) throws RepositoryException {
 
 		MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
-		if (! n.hasProperty("JMXproperty")) {
+		ValueMap props = ResourceUtil.getValueMap(resource);
+		if (!props.containsKey("JMXproperty")) {
 			return;
 		}
+				
 
-		String mbeanName = n.getName().replace("_", ":");
+		String mbeanName = resource.getName().replace("_", ":");
 		ObjectName mbean = null;
 		try {
 			mbean = new ObjectName (mbeanName);
@@ -145,12 +160,6 @@ public class MBeanStatusProviderFactory implements EventHandler {
 			if (beans.size() == 1) {
 				log.info ("Instantiate healtcheck for MBean "+ mbeanName);
 
-				Map<String,Property> props = new HashMap<String,Property>();
-				PropertyIterator pi = n.getProperties();
-				while (pi.hasNext()) {
-					Property p = (Property) pi.next();
-					props.put(p.getName(), p);
-				}
 				MBeanStatusProvider msp = new MBeanStatusProvider (beans.iterator().next(),props);
 
 
@@ -159,7 +168,7 @@ public class MBeanStatusProviderFactory implements EventHandler {
 				params.put(Constants.SERVICE_DESCRIPTION, "Statusprovider for mbean " + mbeanName );
 
 				ServiceRegistration service = registerService (msp,params);
-				registeredServices.put (n.getPath(),service);
+				registeredServices.put (resource.getPath(),service);
 
 			} else {
 				log.warn("Cannot find mbean "+ mbeanName + ", found "+ beans.size());
@@ -187,11 +196,11 @@ public class MBeanStatusProviderFactory implements EventHandler {
      * unregister a service defined by a special node
      * @param definition
      */
-    private void unregisterService(Node definition) {
-    	ServiceRegistration r = registeredServices.get(definition);
+    private void unregisterService(Resource resource) {
+    	ServiceRegistration r = registeredServices.get(resource.getPath());
     	if (r != null) {
     		r.unregister();
-    		registeredServices.remove(definition);
+    		registeredServices.remove(resource.getPath());
     	}
     }
 
