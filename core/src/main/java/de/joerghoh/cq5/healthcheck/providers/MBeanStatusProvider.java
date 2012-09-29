@@ -79,7 +79,7 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 			String stringValue = (String) props.get(value);
 			long longValue = Long.parseLong(stringValue);
 			
-			log.info("value="+value+",stringValue="+stringValue+",jmxStringValue="+jmxStringValue);
+			log.debug("value="+value+",stringValue="+stringValue+",jmxStringValue="+jmxStringValue);
 			
 			// what would be the statusCode if we have a match?
 			int statusCode = OK;
@@ -123,7 +123,6 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 			}
 		}
 		
-		log.info("overall=" + accumulatedStatus);
 		return accumulatedStatus;
 	}
 	
