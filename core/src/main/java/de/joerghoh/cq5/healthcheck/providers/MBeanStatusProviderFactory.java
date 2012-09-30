@@ -8,13 +8,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -44,7 +39,8 @@ import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
 @Component(immediate=true)
 public class MBeanStatusProviderFactory implements EventHandler {
 
-	private static String configPath = "/etc/healthcheck/mbeans";
+	private static String CONFIG_PATH = "/etc/healthcheck/mbeans";
+	private static String ENABLED_PROPERTY = "enabled";
 	private Logger log =  LoggerFactory.getLogger (MBeanStatusProviderFactory.class);
 	
 	private BundleContext bundleContext;
@@ -58,29 +54,24 @@ public class MBeanStatusProviderFactory implements EventHandler {
 	ResourceResolverFactory rrfac;
 	ResourceResolver adminResolver;
 	
-	
-	private Session adminSession;
+
 	
 	@Activate
 	protected void activate(ComponentContext ctx) throws RepositoryException {
-		try {
+	
 			bundleContext = ctx.getBundleContext();
-			adminSession = repo.loginAdministrative(null);
-			adminResolver = rrfac.getAdministrativeResourceResolver(null);
-			initialLoad();
-		} catch (RepositoryException e) {
-			log.error ("Cannot login to repository",e);
-			throw new RepositoryException (e);
-		} catch (LoginException e) {
-			log.error ("Cannot login to repository",e);
-		}
+			try {
+				adminResolver = rrfac.getAdministrativeResourceResolver(null);
+				initialLoad();
+			} catch (LoginException e) {
+				log.error("Cannot login into repo");
+			}
+			
+		
 	}
 	
 	@Deactivate
 	protected void deactivate() {
-		if (adminSession != null) {
-			adminSession.logout();
-		}
 		if (adminResolver != null) {
 			adminResolver.close();
 		}
@@ -96,7 +87,7 @@ public class MBeanStatusProviderFactory implements EventHandler {
             // not a string path or null, ignore this event
             return;
         }
-        if (!path.startsWith(configPath)) {
+        if (!path.startsWith(CONFIG_PATH)) {
         	// it happened outside of our interest -- ignore
         	return;
         }
@@ -117,7 +108,7 @@ public class MBeanStatusProviderFactory implements EventHandler {
 
 	
 	private void initialLoad() throws PathNotFoundException, RepositoryException {
-		loadNodes (adminResolver.getResource(configPath));
+		loadNodes (adminResolver.getResource(CONFIG_PATH));
 	}
 	
 	private void loadNodes (Resource res) throws RepositoryException {
@@ -141,11 +132,16 @@ public class MBeanStatusProviderFactory implements EventHandler {
 		MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
 		ValueMap props = ResourceUtil.getValueMap(resource);
-		if (!props.containsKey("JMXproperty")) {
+		if (!props.containsKey(ENABLED_PROPERTY)) {
 			return;
 		}
-				
-
+		
+		String enabled = (String) props.get(ENABLED_PROPERTY);
+		log.info ("Checking state (enabled = " + enabled + ")");
+		if (!(enabled.equals("true") || enabled.equals("yes"))) {
+			return;
+		}
+		
 		String mbeanName = resource.getName().replace("_", ":");
 		ObjectName mbean = null;
 		try {
@@ -171,7 +167,7 @@ public class MBeanStatusProviderFactory implements EventHandler {
 				registeredServices.put (resource.getPath(),service);
 
 			} else {
-				log.warn("Cannot find mbean "+ mbeanName + ", found "+ beans.size());
+				log.warn("Cannot instantiate, found "+ beans.size() + " mbeans matching the query for "+mbeanName);
 			}
 		}
 
@@ -194,7 +190,7 @@ public class MBeanStatusProviderFactory implements EventHandler {
 	
     /**
      * unregister a service defined by a special node
-     * @param definition
+     * @param resource the resource defining the service configuration
      */
     private void unregisterService(Resource resource) {
     	ServiceRegistration r = registeredServices.get(resource.getPath());

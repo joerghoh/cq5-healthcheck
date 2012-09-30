@@ -1,12 +1,8 @@
 package de.joerghoh.cq5.healthcheck.providers;
 
 import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
-import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
