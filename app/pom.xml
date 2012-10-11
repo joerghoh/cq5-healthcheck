@@ -1,107 +1,117 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>de.joerghoh.cq5.healthcheck</groupId>
-        <artifactId>de.joerghoh.cq5.healthcheck.parent</artifactId>
-        <relativePath>../parent/pom.xml</relativePath>
-        <version>0.0.1-SNAPSHOT</version>
-    </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>de.joerghoh.cq5.healthcheck</groupId>
+		<artifactId>de.joerghoh.cq5.healthcheck.parent</artifactId>
+		<relativePath>../parent/pom.xml</relativePath>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
 
-    <packaging>content-package</packaging>
+	<packaging>content-package</packaging>
 
 
-    <dependencies>
-        <dependency>
-            <groupId>de.joerghoh.cq5.healthstatus.core</groupId>
-            <artifactId>core</artifactId>
-            <version>${project.version}</version>                        
-        </dependency>
-        <!-- add additional dependencies -->
-    </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>de.joerghoh.cq5.healthcheck</groupId>
+			<artifactId>core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.joerghoh.cq5.healthcheck</groupId>
+			<artifactId>jmx-extension</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!-- add additional dependencies -->
+	</dependencies>
 
-    <build>
-        <resources>
-            <resource>
-                <directory>${basedir}/META-INF</directory>
-                <targetPath>../vault-work/META-INF</targetPath>
-            </resource>
-            <resource>
-                <directory>${basedir}/jcr_root</directory>
-                <filtering>false</filtering>
-                <excludes>
-                    <exclude>**/.vlt</exclude>
-                    <exclude>**/.vltignore</exclude>
-                    <exclude>**/*.iml</exclude>
-                    <exclude>**/.classpath</exclude>
-                    <exclude>**/.project</exclude>
-                    <exclude>**/.DS_Store</exclude>
-                    <exclude>**/target/**</exclude>
-                    <exclude>libs/**</exclude>
-                </excludes>
-            </resource>
-        </resources>
-        
-        <plugins>
+	<build>
+		<resources>
+			<resource>
+				<directory>${basedir}/META-INF</directory>
+				<targetPath>../vault-work/META-INF</targetPath>
+			</resource>
+			<resource>
+				<directory>${basedir}/jcr_root</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>**/.vlt</exclude>
+					<exclude>**/.vltignore</exclude>
+					<exclude>**/*.iml</exclude>
+					<exclude>**/.classpath</exclude>
+					<exclude>**/.project</exclude>
+					<exclude>**/.DS_Store</exclude>
+					<exclude>**/target/**</exclude>
+					<exclude>libs/**</exclude>
+				</excludes>
+			</resource>
+		</resources>
 
-            <plugin>
-                <groupId>com.day.jcr.vault</groupId>
-                <artifactId>maven-vault-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <group>HealthCheck</group>
-                    <name>healthcheck</name>
-                    <requiresRoot>true</requiresRoot>
+		<plugins>
 
-                    <install>true</install>
-                    <verbose>true</verbose>
+			<plugin>
+				<groupId>com.day.jcr.vault</groupId>
+				<artifactId>maven-vault-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<group>HealthCheck</group>
+					<name>healthcheck</name>
+					<requiresRoot>true</requiresRoot>
 
-                    <packageFile>${project.build.directory}/${project.artifactId}-${project.version}.zip</packageFile>
+					<install>true</install>
+					<verbose>true</verbose>
 
-                    <version>${project.version}</version>
-                    <properties>
-                        <acHandling>overwrite</acHandling>
-                    </properties>
+					<packageFile>${project.build.directory}/${project.artifactId}-${project.version}.zip</packageFile>
 
-                    <embeddeds>
-                        <embedded>
-                            <groupId>de.joerghoh.cq5.healthstatus.core</groupId>
-                            <artifactId>core</artifactId>
-                            <target>/apps/healthcheck/install</target>
-                        </embedded>
-                    </embeddeds>
-                </configuration>
-            </plugin>
+					<version>${project.version}</version>
+					<properties>
+						<acHandling>overwrite</acHandling>
+					</properties>
 
-        </plugins>
-    </build>
+					<embeddeds>
+						<embedded>
+							<groupId>de.joerghoh.cq5.healthcheck</groupId>
+							<artifactId>core</artifactId>
+							<target>/apps/healthcheck/install</target>
+						</embedded>
+						<embedded>
+							<groupId>de.joerghoh.cq5.healthcheck</groupId>
+							<artifactId>jmx-extension</artifactId>
+							<target>/apps/healthcheck/install</target>
+						</embedded>
+					</embeddeds>
+				</configuration>
+			</plugin>
 
-    <profiles>
-        <profile>
-            <id>installPackages</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.day.jcr.vault</groupId>
-                        <artifactId>maven-vault-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>install-package</id>
-                                <goals>
-                                    <goal>install</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+		</plugins>
+	</build>
 
-    <groupId>de.joerghoh.cq5.healthcheck</groupId>
-    <name>Healthstatus application package</name>
-    <artifactId>de.joerghoh.cq5.healtcheck.app</artifactId>
+	<profiles>
+		<profile>
+			<id>installPackages</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.day.jcr.vault</groupId>
+						<artifactId>maven-vault-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>install-package</id>
+								<goals>
+									<goal>install</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<name>Healthstatus application package</name>
+	<artifactId>de.joerghoh.cq5.healthcheck.app</artifactId>
 </project>

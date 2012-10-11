@@ -122,6 +122,7 @@
 		    	<artifactId>org.apache.sling.commons.osgi</artifactId>
 		    	<version>2.1.0</version>
 		    	<type>bundle</type>
+		    	<scope>provided</scope>
 		    </dependency>
 		    <dependency>
 		    	<groupId>com.adobe.granite</groupId>
