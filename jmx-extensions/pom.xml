@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>de.joerghoh.cq5.healthcheck.parent</artifactId>
+        <relativePath>../parent/pom.xml</relativePath>
+        <version>0.0.1-SNAPSHOT</version>
+        <groupId>de.joerghoh.cq5.healthcheck</groupId>
+    </parent>
+
+	<packaging>bundle</packaging>
+
+	<name>CQ5 JMX Extensions</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.day.cq.wcm</groupId>
+			<artifactId>cq-wcm-api</artifactId>
+		</dependency>
+		
+		<!-- add additional dependencies here -->
+
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.scr.annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.osgi.service.obr</artifactId>
+			<scope>provided</scope>
+			</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.compendium</artifactId>
+		</dependency>
+		  <dependency>
+            <groupId>javax.jcr</groupId>
+            <artifactId>jcr</artifactId>
+            <version>2.0</version>
+            <scope>provided</scope>
+        </dependency>
+		<dependency>
+			<groupId>org.apache.sling</groupId>
+			<artifactId>org.apache.sling.commons.osgi</artifactId>
+			<type>bundle</type>
+			<version>2.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.sling</groupId>
+			<artifactId>org.apache.sling.api</artifactId>
+			<version>2.2.4</version>
+			<type>bundle</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+            <groupId>com.day.cqse</groupId>
+            <artifactId>cqse-httpservice</artifactId>
+            <version>4.1.24</version>
+            <scope>provided</scope>
+        </dependency>
+		<dependency>
+            <groupId>com.adobe.granite</groupId>
+            <artifactId>com.adobe.granite.jcrclustersupport</artifactId>
+            <version>0.5.0</version>
+            <scope>provided</scope>
+        </dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-scr-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-Category>custom</Bundle-Category>
+						<Include-Resource>
+							{maven-resources}
+						</Include-Resource>
+						<Export-Package />
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+	    <!-- define deployment steps when installPackages profile is selected -->
+	    
+		<profile>
+			<id>installPackages</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.sling</groupId>
+						<artifactId>maven-sling-plugin</artifactId>
+						<executions>
+		                    <execution>
+		                        <id>generate-adapter-metadata</id>
+		                        <phase>process-classes</phase>
+		                        <goals>
+		                            <goal>generate-adapter-metadata</goal>
+		                        </goals>
+		                    </execution>
+							<execution>
+								<id>install-bundle</id>
+								<goals>
+									<goal>install</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<groupId>de.joerghoh.cq5.healthcheck</groupId>
+	<artifactId>jmx-extension</artifactId>
+</project>
