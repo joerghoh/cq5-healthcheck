@@ -49,7 +49,7 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 			String value = iter.next();
 			
 			/*
-			 * value might be: "my.JMX.propertyName.warn.>", and we need the tripel of
+			 * value might be: "my.JMX.propertyName.warn.>", and we need the tripl of
 			 * "jmxAttributeName","level" and "type of comparison".
 			 * The jmxAttributeName might contain dots, so we need to reverse to use String.split()
 			 */

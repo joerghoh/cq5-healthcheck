@@ -18,6 +18,8 @@ import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.Service;
+import org.apache.felix.scr.annotations.Property;
 import org.apache.sling.api.SlingConstants;
 import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.Resource;
@@ -36,7 +38,16 @@ import org.slf4j.LoggerFactory;
 
 import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
 
+/**
+ * The MBeanStatusProvider is responsible to maintain the MBeanStatusProvider services as 
+ * they are configured in the repository.
+ * For all MBeans, for which a configuration exis
+ * @author joerg
+ *
+ */
 @Component(immediate=true)
+@Service()
+@Property(name="event.topics",value="org/apache/sling/api/resource/Resource/*")
 public class MBeanStatusProviderFactory implements EventHandler {
 
 	private static String CONFIG_PATH = "/etc/healthcheck/mbeans";
@@ -62,7 +73,7 @@ public class MBeanStatusProviderFactory implements EventHandler {
 			bundleContext = ctx.getBundleContext();
 			try {
 				adminResolver = rrfac.getAdministrativeResourceResolver(null);
-				initialLoad();
+				loadConfig();
 			} catch (LoginException e) {
 				log.error("Cannot login into repo");
 			}
@@ -78,6 +89,9 @@ public class MBeanStatusProviderFactory implements EventHandler {
 		deactivateAllServices();
 	}
 
+	/**
+	 * The event handler for resource changes
+	 */
 	public void handleEvent(org.osgi.service.event.Event event) {
 		final Object p = event.getProperty(SlingConstants.PROPERTY_PATH);
         final String path;
@@ -92,14 +106,17 @@ public class MBeanStatusProviderFactory implements EventHandler {
         	return;
         }
         try {
+        	// potentially config is changed.
+        	
         	Resource r = adminResolver.getResource(path);
+        	log.info("Config change detected at " + path);
         	if (SlingConstants.TOPIC_RESOURCE_ADDED.equals(event.getTopic())) {
         		createService(r);
         	} else if (SlingConstants.TOPIC_RESOURCE_CHANGED.equals(event.getTopic())) {
-        		unregisterService(r);
+        		unregisterService(path);
         		createService(r);
         	} else if (SlingConstants.TOPIC_RESOURCE_REMOVED.equals(event.getTopic())) {
-        		unregisterService(r);
+        		unregisterService(path);
         	}
         } catch (RepositoryException e) {
         	log.error("Cannot handle event ",e);
@@ -107,10 +124,15 @@ public class MBeanStatusProviderFactory implements EventHandler {
 	}
 
 	
-	private void initialLoad() throws PathNotFoundException, RepositoryException {
+	private void loadConfig() throws PathNotFoundException, RepositoryException {
 		loadNodes (adminResolver.getResource(CONFIG_PATH));
 	}
 	
+	/**
+	 * Recursively iterate through all resources and create services where appropriate
+	 * @param res
+	 * @throws RepositoryException
+	 */
 	private void loadNodes (Resource res) throws RepositoryException {
 		
 		createService (res);
@@ -137,7 +159,6 @@ public class MBeanStatusProviderFactory implements EventHandler {
 		}
 		
 		String enabled = (String) props.get(ENABLED_PROPERTY);
-		log.info ("Checking state (enabled = " + enabled + ")");
 		if (!(enabled.equals("true") || enabled.equals("yes"))) {
 			return;
 		}
@@ -148,8 +169,10 @@ public class MBeanStatusProviderFactory implements EventHandler {
 			mbean = new ObjectName (mbeanName);
 		} catch (MalformedObjectNameException e) {
 			log.error("Cannot create ObjectName",e);
+			return;
 		} catch (NullPointerException e) {
 			log.error("Cannot create ObjectName",e);
+			return;
 		}
 		if (mbean != null) {
 			Set<ObjectName> beans = server.queryNames(mbean, null);
@@ -192,11 +215,11 @@ public class MBeanStatusProviderFactory implements EventHandler {
      * unregister a service defined by a special node
      * @param resource the resource defining the service configuration
      */
-    private void unregisterService(Resource resource) {
-    	ServiceRegistration r = registeredServices.get(resource.getPath());
+    private void unregisterService(String path) {
+    	ServiceRegistration r = registeredServices.get(path);
     	if (r != null) {
     		r.unregister();
-    		registeredServices.remove(resource.getPath());
+    		registeredServices.remove(path);
     	}
     }
 
