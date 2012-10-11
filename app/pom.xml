@@ -6,7 +6,7 @@
 		<groupId>de.joerghoh.cq5.healthcheck</groupId>
 		<artifactId>de.joerghoh.cq5.healthcheck.parent</artifactId>
 		<relativePath>../parent/pom.xml</relativePath>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.1-SNAPSHOT</version>
 	</parent>
 
 	<packaging>content-package</packaging>
@@ -15,14 +15,15 @@
 	<dependencies>
 		<dependency>
 			<groupId>de.joerghoh.cq5.healthcheck</groupId>
-			<artifactId>core</artifactId>
+			<artifactId>jmx-extension</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.joerghoh.cq5.healthcheck</groupId>
-			<artifactId>jmx-extension</artifactId>
+			<artifactId>core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
 		<!-- add additional dependencies -->
 	</dependencies>
 
@@ -52,7 +53,8 @@
 
 			<plugin>
 				<groupId>com.day.jcr.vault</groupId>
-				<artifactId>maven-vault-plugin</artifactId>
+				<artifactId>content-package-maven-plugin</artifactId>
+				<version>0.0.18</version>
 				<extensions>true</extensions>
 				<configuration>
 					<group>HealthCheck</group>
@@ -72,14 +74,15 @@
 					<embeddeds>
 						<embedded>
 							<groupId>de.joerghoh.cq5.healthcheck</groupId>
-							<artifactId>core</artifactId>
+							<artifactId>jmx-extension</artifactId>
 							<target>/apps/healthcheck/install</target>
 						</embedded>
 						<embedded>
 							<groupId>de.joerghoh.cq5.healthcheck</groupId>
-							<artifactId>jmx-extension</artifactId>
+							<artifactId>core</artifactId>
 							<target>/apps/healthcheck/install</target>
 						</embedded>
+						
 					</embeddeds>
 				</configuration>
 			</plugin>
@@ -102,7 +105,7 @@
 							<execution>
 								<id>install-package</id>
 								<goals>
-									<goal>install</goal>
+									<goal>package</goal>
 								</goals>
 							</execution>
 						</executions>
