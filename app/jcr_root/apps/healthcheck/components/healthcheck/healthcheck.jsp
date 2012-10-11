@@ -29,7 +29,7 @@
 	<%= overall.getStatus() %>
 	<h1>Details</h1>
 	<table>
-		<tr><th>Responsible</th><th>Message</th><th>Status</th></tr>
+		<tr><th>MBean</th><th>Message</th><th>Status</th></tr>
 		<% for (HealthStatus s: details) { 
 			String statusColor = "green";
 			if (s.getStatus() == HealthStatusProvider.WARN) {
