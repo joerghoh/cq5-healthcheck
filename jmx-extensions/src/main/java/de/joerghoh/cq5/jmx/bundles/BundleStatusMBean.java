@@ -13,4 +13,17 @@ public interface BundleStatusMBean {
 	 * @return
 	 */
 	public int getFragmentBundles();
+	
+	
+	/**
+	 * Determine the number of resolved bundles
+	 * @return
+	 */
+	public int getResolvedBundles();
+	
+	/**
+	 * Determine teh number of installed bundles
+	 * @return
+	 */
+	public int getInstalledBundles();
 }
