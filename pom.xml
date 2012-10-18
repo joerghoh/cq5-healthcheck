@@ -6,7 +6,7 @@
 	<groupId>de.joerghoh.cq5</groupId>
 	<artifactId>reactor</artifactId>
 	<packaging>pom</packaging>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1-SNAPSHOT</version>
 
 	<name>Sample Project Reactor</name>
 

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>de.joerghoh.cq5.healthcheck.parent</artifactId>
         <relativePath>../parent/pom.xml</relativePath>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.1-SNAPSHOT</version>
         <groupId>de.joerghoh.cq5.healthcheck</groupId>
     </parent>
 
@@ -53,8 +53,7 @@
 			<groupId>org.apache.sling</groupId>
 			<artifactId>org.apache.sling.commons.osgi</artifactId>
 			<type>bundle</type>
-			<version>2.1.0</version>
-		</dependency>
+			</dependency>
 		<dependency>
 			<groupId>org.apache.sling</groupId>
 			<artifactId>org.apache.sling.api</artifactId>
@@ -136,4 +135,5 @@
 
 	<groupId>de.joerghoh.cq5.healthcheck</groupId>
 	<artifactId>jmx-extension</artifactId>
+	<version>0.1-SNAPSHOT</version>
 </project>

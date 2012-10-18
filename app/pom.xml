@@ -23,7 +23,7 @@
 			<artifactId>core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+
 		<!-- add additional dependencies -->
 	</dependencies>
 
@@ -61,6 +61,9 @@
 					<name>healthcheck</name>
 					<requiresRoot>true</requiresRoot>
 
+					<builtContentDirectory>jcr_root</builtContentDirectory>
+					<targetURL>http://localhost:4502/crx/packmgr/service.jsp</targetURL>
+
 					<install>true</install>
 					<verbose>true</verbose>
 
@@ -82,38 +85,22 @@
 							<artifactId>core</artifactId>
 							<target>/apps/healthcheck/install</target>
 						</embedded>
-						
 					</embeddeds>
+
 				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>package</goal>
+							<goal>install</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 
 		</plugins>
 	</build>
 
-	<profiles>
-		<profile>
-			<id>installPackages</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.day.jcr.vault</groupId>
-						<artifactId>maven-vault-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>install-package</id>
-								<goals>
-									<goal>package</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 	<name>Healthstatus application package</name>
 	<artifactId>de.joerghoh.cq5.healthcheck.app</artifactId>
