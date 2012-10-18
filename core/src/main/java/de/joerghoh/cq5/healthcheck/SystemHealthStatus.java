@@ -14,10 +14,12 @@ public class SystemHealthStatus {
 	
 	private List<HealthStatus> results;
 	private int status;
+	private String monitoringMessage;
 	
-	public SystemHealthStatus (int status, List<HealthStatus> items) {
+	public SystemHealthStatus (int status, List<HealthStatus> items, String message) {
 		this.status = status;
 		results = items;
+		monitoringMessage = message;
 	}
 
 	public String getStatus() {
@@ -31,6 +33,10 @@ public class SystemHealthStatus {
 	
 	public List<HealthStatus> getDetails() {
 		return results;
+	}
+	
+	public String getMonitoringMessage () {
+		return monitoringMessage;
 	}
 	
 }

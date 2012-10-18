@@ -21,12 +21,15 @@
 	HealthStatusService status = sling.getService(HealthStatusService.class);
 	SystemHealthStatus overall = status.getOverallStatus();
 	List<HealthStatus> details = overall.getDetails();
+	String monitoringMessage = overall.getMonitoringMessage();
 
 %>
 <html>
 <body>
-	<b>Overall Status:</b>
-	<%= overall.getStatus() %>
+	<p><b>Overall Status:</b> <%= overall.getStatus() %></p>
+	<% if (!monitoringMessage.equals("")) {
+		%><p><b>Caution:</b> <%= monitoringMessage %></p><%
+	} %>
 	<h1>Details</h1>
 	<table>
 		<tr><th>MBean</th><th>Message</th><th>Status</th></tr>
