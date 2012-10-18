@@ -7,6 +7,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
@@ -41,13 +42,14 @@ import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
 /**
  * The MBeanStatusProvider is responsible to maintain the MBeanStatusProvider services as 
  * they are configured in the repository.
- * For all MBeans, for which a configuration exis
+ * For all MBeans, for which a configuration exist, healthstatus services are created which monitor these mbeans.
  * @author joerg
  *
  */
 @Component(immediate=true)
 @Service()
-@Property(name="event.topics",value="org/apache/sling/api/resource/Resource/*")
+@Property(name="event.topics",value={"org/apache/sling/api/resource/Resource/*",
+		"org/osgi/framework/BundleEvent/*"})
 public class MBeanStatusProviderFactory implements EventHandler {
 
 	private static String CONFIG_PATH = "/etc/healthcheck/mbeans";
@@ -56,7 +58,9 @@ public class MBeanStatusProviderFactory implements EventHandler {
 	
 	private BundleContext bundleContext;
 	
-	private Map<String,ServiceRegistration> registeredServices = new HashMap<String,ServiceRegistration>();
+	private Map<String,ServiceRegistration> registeredServices = new ConcurrentHashMap<String,ServiceRegistration>();
+	//private String serviceRegistryLocker = "lock";
+	
 	
 	@Reference
 	SlingRepository repo;
@@ -64,6 +68,8 @@ public class MBeanStatusProviderFactory implements EventHandler {
 	@Reference
 	ResourceResolverFactory rrfac;
 	ResourceResolver adminResolver;
+	
+	MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 	
 
 	
@@ -75,7 +81,7 @@ public class MBeanStatusProviderFactory implements EventHandler {
 				adminResolver = rrfac.getAdministrativeResourceResolver(null);
 				loadConfig();
 			} catch (LoginException e) {
-				log.error("Cannot login into repo");
+				log.error("Cannot login into repo",e);
 			}
 			
 		
@@ -91,11 +97,32 @@ public class MBeanStatusProviderFactory implements EventHandler {
 
 	/**
 	 * The event handler for resource changes
+	 * used to track config changes in the repository and also to modifications to the mbeans
+	 * (services are used to provide mbeans, so we monitor for all bundle events)
 	 */
 	public void handleEvent(org.osgi.service.event.Event event) {
+		
+		
+		/**
+		 * On a bundle event we validate all services, as a bundle event might have added/removed new mbeans,
+		 * so we do
+		 *  * validate that for all loaded healthstatus services the corresponding mbean exists
+		 *  * check the config, if we can load an additional healthstatus services, because a required mbean just arrived
+		 */
+
+		if (event.getTopic().startsWith("org/osgi/framework/BundleEvent/")) {
+			try {
+				log.info("Validating config");
+				validateRunningServices();
+				loadConfig();
+			} catch (Exception e) {
+				log.error("Cannot handle exception ",e);
+			}
+		}
+		
 		final Object p = event.getProperty(SlingConstants.PROPERTY_PATH);
         final String path;
-        if (p instanceof String) {
+        if (p != null && p instanceof String) {
             path = (String) p;
         } else {
             // not a string path or null, ignore this event
@@ -106,7 +133,7 @@ public class MBeanStatusProviderFactory implements EventHandler {
         	return;
         }
         try {
-        	// potentially config is changed.
+        	// potentially config has changed.
         	
         	Resource r = adminResolver.getResource(path);
         	log.info("Config change detected at " + path);
@@ -124,6 +151,26 @@ public class MBeanStatusProviderFactory implements EventHandler {
 	}
 
 	
+	/**
+	 * Checks all running services if their corresponding mbeans are still there. If they're no more present,
+	 * unregister the respective service
+	 */
+	private void validateRunningServices() {
+		final Iterator<String> services = registeredServices.keySet().iterator();
+		while (services.hasNext()) {
+			String path = services.next(); // the path of the resource describing this service
+			Resource r = adminResolver.getResource(path);
+			ObjectName mbean = buildObjectName(r);
+			if (mbean != null) {
+				if (!mbeanExists( mbean)) {
+					unregisterService(path);
+				}
+			}
+
+		}
+	}
+
+	
 	private void loadConfig() throws PathNotFoundException, RepositoryException {
 		loadNodes (adminResolver.getResource(CONFIG_PATH));
 	}
@@ -135,7 +182,9 @@ public class MBeanStatusProviderFactory implements EventHandler {
 	 */
 	private void loadNodes (Resource res) throws RepositoryException {
 		
-		createService (res);
+		if (isMbeanDefinition(res)) {
+			createService (res);
+		}
 		Iterator<Resource> children = res.listChildren();
 		while (children.hasNext()) {
 			Resource r = children.next();
@@ -143,45 +192,35 @@ public class MBeanStatusProviderFactory implements EventHandler {
 		}
 	}
 	
+
+	
+
+	
 	/**
 	 * Try to instantiate a healthStatusProvider on a definition
-	 * @param n -- the Node, where the definition is located
+	 * @param resource the resource where the definition is stored
 	 * @return
 	 * @throws RepositoryException 
 	 */
 	private void createService (Resource resource) throws RepositoryException {
 
-		MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
 		ValueMap props = ResourceUtil.getValueMap(resource);
-		if (!props.containsKey(ENABLED_PROPERTY)) {
+		if (!isMbeanDefinition(resource)) {
 			return;
 		}
-		
-		String enabled = (String) props.get(ENABLED_PROPERTY);
-		if (!(enabled.equals("true") || enabled.equals("yes"))) {
+		if (registeredServices.get(resource.getPath()) != null) {
+			log.debug("Trying to register already registered service for path " + resource.getPath());
 			return;
 		}
-		
-		String mbeanName = resource.getName().replace("_", ":");
-		ObjectName mbean = null;
-		try {
-			mbean = new ObjectName (mbeanName);
-		} catch (MalformedObjectNameException e) {
-			log.error("Cannot create ObjectName",e);
-			return;
-		} catch (NullPointerException e) {
-			log.error("Cannot create ObjectName",e);
-			return;
-		}
+		ObjectName mbean = buildObjectName(resource);
 		if (mbean != null) {
-			Set<ObjectName> beans = server.queryNames(mbean, null);
-			if (beans.size() == 1) {
+			String mbeanName = mbean.toString();
+			if (mbeanExists ( mbean)) {
+
 				log.info ("Instantiate healtcheck for MBean "+ mbeanName);
 
-				MBeanStatusProvider msp = new MBeanStatusProvider (beans.iterator().next(),props);
-
-
+				MBeanStatusProvider msp = new MBeanStatusProvider (mbean,props);
 				Dictionary<String,String> params = new Hashtable<String,String>();
 				//params.put(Constants.SERVICE_PID, pid );
 				params.put(Constants.SERVICE_DESCRIPTION, "Statusprovider for mbean " + mbeanName );
@@ -189,14 +228,52 @@ public class MBeanStatusProviderFactory implements EventHandler {
 				ServiceRegistration service = registerService (msp,params);
 				registeredServices.put (resource.getPath(),service);
 
-			} else {
-				log.warn("Cannot instantiate, found "+ beans.size() + " mbeans matching the query for "+mbeanName);
+
+
 			}
 		}
+	}
 
+	/**
+	 * determine if a given resource denotes a valid service definition
+	 * @param resource the resource which might define a service
+	 * @return true if it's a valid definition
+	 */
+	private boolean isMbeanDefinition(Resource resource) {
+		ValueMap props = ResourceUtil.getValueMap(resource);
+		if (!props.containsKey(ENABLED_PROPERTY)) {
+			return false;
+		}
+		
+		String enabled = (String) props.get(ENABLED_PROPERTY);
+		if (!(enabled.equals("true") || enabled.equals("yes"))) {
+			return false;
+		}
+		return true;
 	}
 	
-    // helper to register services
+	
+	private ObjectName buildObjectName (Resource resource) {
+		String mbeanName = resource.getName().replace("_", ":");
+		ObjectName mbean = null;
+		try {
+			mbean = new ObjectName (mbeanName);
+		} catch (MalformedObjectNameException e) {
+			log.error("Cannot create ObjectName "+ mbeanName,e);
+		} catch (NullPointerException e) {
+			log.error("Cannot create ObjectName "+ mbeanName,e);
+		}
+		return mbean;
+	}
+	
+	private boolean mbeanExists ( ObjectName mbean) {
+		
+		Set<ObjectName> beans = server.queryNames(mbean, null);
+		return (beans.size() == 1);
+	}
+	
+	//////////////////////////////////////////////////////
+    // helper to register & unregister services
     
     private ServiceRegistration registerService (MBeanStatusProvider service, Dictionary<String,String> params) {
     	return bundleContext.registerService(HealthStatusProvider.class.getName(), service, params);
@@ -209,6 +286,7 @@ public class MBeanStatusProviderFactory implements EventHandler {
     		sr.unregister();
     	}
     	registeredServices.clear();
+
     }
 	
     /**
