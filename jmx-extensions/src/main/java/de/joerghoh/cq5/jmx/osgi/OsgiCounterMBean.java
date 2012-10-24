@@ -1,0 +1,30 @@
+package de.joerghoh.cq5.jmx.osgi;
+
+public interface OsgiCounterMBean {
+
+	/**
+	 * Return the number of OSGI events which have been posted since startup
+	 * @return
+	 */
+	long getTotalEventCounter();
+	
+	/**
+	 * Returns the number of events, which applies to Sling resources (event: org/apache/sling/api/resource/Resource/*)
+	 * @return
+	 */
+	long getResourceEventCounter();
+	
+	/**
+	 * Returns the number of events, which have a event topic of "com/day/cq/replication/job/publish"
+	 * @return
+	 */
+	long getReplicationEventCounter();
+
+	
+	/**
+	 * Returns the number of all OSGI relevant events (org/osgiframework/*")
+	 * @return
+	 */
+	long getOsgiEventCounter();
+	
+}
