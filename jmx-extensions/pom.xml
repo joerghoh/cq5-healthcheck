@@ -133,7 +133,5 @@
 		</profile>
 	</profiles>
 
-	<groupId>de.joerghoh.cq5.healthcheck</groupId>
 	<artifactId>jmx-extension</artifactId>
-	<version>0.1-SNAPSHOT</version>
-</project>
+	</project>

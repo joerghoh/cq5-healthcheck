@@ -22,6 +22,7 @@
 		<module>parent</module>
 		<module>core</module>
 		<module>app</module>
+		<module>jmx-extensions</module>
 	</modules>
 
 	<repositories>
