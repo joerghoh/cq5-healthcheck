@@ -4,6 +4,7 @@ import java.util.Dictionary;
 
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.Bundle;
@@ -18,7 +19,10 @@ import org.osgi.service.component.ComponentContext;
 		name="JMX bundle status provider"
 		)
 @Service (value=BundleStatusMBean.class)
-@Property (name="jmx.objectname",value="de.joerghoh.cq5.jmx:id=bundles")
+@Properties({
+	@Property (name="jmx.objectname",value="de.joerghoh.cq5.jmx:id=bundles"),
+	@Property(name="event.topics",value={"*"})
+})
 public class BundleStatusImpl implements BundleStatusMBean {
 	
 	private BundleContext bctx;

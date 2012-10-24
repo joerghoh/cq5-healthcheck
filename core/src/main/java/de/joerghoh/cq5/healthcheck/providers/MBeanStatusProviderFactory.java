@@ -59,11 +59,7 @@ public class MBeanStatusProviderFactory implements EventHandler {
 	private BundleContext bundleContext;
 	
 	private Map<String,ServiceRegistration> registeredServices = new ConcurrentHashMap<String,ServiceRegistration>();
-	//private String serviceRegistryLocker = "lock";
 	
-	
-	@Reference
-	SlingRepository repo;
 	
 	@Reference
 	ResourceResolverFactory rrfac;
