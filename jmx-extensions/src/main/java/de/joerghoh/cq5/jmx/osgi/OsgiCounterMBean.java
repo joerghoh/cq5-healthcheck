@@ -15,7 +15,7 @@ public interface OsgiCounterMBean {
 	long getResourceEventCounter();
 	
 	/**
-	 * Returns the number of events, which have a event topic of "com/day/cq/replication/job/publish"
+	 * Returns the number of events, which apply to replication jobs (event: com/day/cq/replication/job/publish)
 	 * @return
 	 */
 	long getReplicationEventCounter();

@@ -13,24 +13,27 @@ import org.osgi.service.event.EventHandler;
 		immediate=true,
 		metatype=true,
 		description="Exposes details on the number of OSGI events",
-		name="de.joerghoh.cq5.jmx.osgi.eventCounter"
+		name="de.joerghoh.cq5.jmx.osgi.OsgiEventCounter"
 		)
 @Service (value={OsgiCounterMBean.class,EventHandler.class})
 @Properties({
-	@Property (name="jmx.objectname",value="de.joerghoh.cq5.jmx.osgi:id=OsgiCounter"),
+	@Property (name="jmx.objectname",value="de.joerghoh.cq5.jmx.osgi:id=OsgiEventCounter"),
 	@Property (name="event.topics", value={"org/apache/sling/*","com/day/*","org/osgi/framework/*"})
 })
-public class OsgiCounter implements OsgiCounterMBean, EventHandler {
+public class OsgiEventCounter implements OsgiCounterMBean, EventHandler {
 
 	
 	long totalCounter = 0;
 	
+	// Resource Events
 	private static String SLING_RESOURCE_EVENTS = "org/apache/sling/api/resource/Resource";
 	long resourceCounter = 0;
 	
+	// Replication Events
 	private static String REPLICATION_EVENTS = "com/day/cq/replication/job/publish/";
 	long replicationEventCounter = 0;
 	
+	// OSGI related events (bundles, components, services)
 	private static String OSGI_EVENTS = "org/osgi/framework/";
 	long osgiEventCounter = 0;
 	
