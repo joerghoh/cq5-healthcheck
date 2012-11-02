@@ -1,6 +1,6 @@
 package de.joerghoh.cq5.jmx.osgi;
 
-public interface OsgiCounterMBean {
+public interface OsgiEventCounterMBean {
 
 	/**
 	 * Return the number of OSGI events which have been posted since startup
