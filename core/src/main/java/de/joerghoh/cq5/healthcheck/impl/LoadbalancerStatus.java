@@ -24,6 +24,9 @@ import de.joerghoh.cq5.healthcheck.HealthStatusService;
 /**
  * A servlet, which returns the actual status suitable for a loadbalancer.
  * 
+ * Internally the HealthStatusService and the current clustering status is used
+ * to determine the return code.
+ * 
  * This code allows to specify a cluster strategy:
  *  * ActiveActive: All cluster nodes are eligable to return "OK"
  *  * ActivePassive: Only the master is eligable to return "OK", slaves always return "NoOK".
@@ -99,7 +102,7 @@ public class LoadbalancerStatus extends SlingSafeMethodsServlet implements Clust
 
 
 	public void unbindRepository() {
-		// TODO Auto-generated method stub
+		log.warn ("Repository is unbound, this should not happen!");
 		
 	}
 	
