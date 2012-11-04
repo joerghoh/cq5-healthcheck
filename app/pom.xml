@@ -15,6 +15,7 @@
 	<packaging>content-package</packaging>
 
 	<name>CQ5 - Health Check - Application Package</name>
+	<description>Contains all components of the Health Check application.</description>
 
 	<dependencies>
 		<dependency>
@@ -59,6 +60,10 @@
 				<artifactId>content-package-maven-plugin</artifactId>
 				<extensions>true</extensions>
 				<configuration>
+				    <name>cq5-healthcheck</name>
+				    <description>${project.description}</description>
+				    <group>Healthcheck</group>
+				    <finalName>cq5-healthcheck-${project.version}</finalName>
 				    <embeddeds>
 						<embedded>
 							<groupId>de.joerghoh.cq5.healthcheck</groupId>

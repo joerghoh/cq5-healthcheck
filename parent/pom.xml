@@ -68,7 +68,6 @@
 					<extensions>true</extensions>
 					<configuration>
 						<group>Healthcheck</group>
-						<requiresRoot>true</requiresRoot>
 						<failOnError>true</failOnError>
 						<install>true</install>
 						<verbose>true</verbose>
