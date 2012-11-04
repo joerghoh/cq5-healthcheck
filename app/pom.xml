@@ -54,16 +54,12 @@
 		</resources>
 
 		<plugins>
-
 			<plugin>
 				<groupId>com.day.jcr.vault</groupId>
-				<artifactId>maven-vault-plugin</artifactId>
+				<artifactId>content-package-maven-plugin</artifactId>
 				<extensions>true</extensions>
 				<configuration>
-					<group>HealthCheck</group>
-					<requiresRoot>true</requiresRoot>
-
-                    <embeddeds>
+				    <embeddeds>
 						<embedded>
 							<groupId>de.joerghoh.cq5.healthcheck</groupId>
 							<artifactId>jmx-extension</artifactId>
@@ -75,17 +71,33 @@
 							<target>/apps/healthcheck/install</target>
 						</embedded>
 					</embeddeds>
-
 				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>package</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
-
 		</plugins>
 	</build>
+	
+	<profiles>
+        <profile>
+            <id>installPackages</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.day.jcr.vault</groupId>
+                        <artifactId>maven-vault-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>install-package</id>
+                                <goals>
+                                    <goal>install</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
