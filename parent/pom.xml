@@ -4,13 +4,19 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.joerghoh.cq5.healthcheck</groupId>
+	<parent>
+		<groupId>de.joerghoh.cq5</groupId>
+		<artifactId>reactor</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<groupId>de.joerghoh.cq5.healthcheck</groupId>
 	<artifactId>parent</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	
+
 	<name>CQ5 - Health Check - Parent</name>
-	
+
 	<properties>
 		<file.encoding>utf-8</file.encoding>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -25,6 +31,7 @@
 					<artifactId>maven-bundle-plugin</artifactId>
 					<version>2.1.0</version>
 				</plugin>
+
 				<plugin>
 					<groupId>org.apache.felix</groupId>
 					<artifactId>maven-scr-plugin</artifactId>
@@ -39,7 +46,7 @@
 						</execution>
 					</executions>
 				</plugin>
-				<!-- Sling plugin dependency and config -->
+
 				<plugin>
 					<groupId>org.apache.sling</groupId>
 					<artifactId>maven-sling-plugin</artifactId>
@@ -53,7 +60,7 @@
 						<slingUrlSuffix>/apps/healthcheck/install/</slingUrlSuffix>
 					</configuration>
 				</plugin>
-				<!-- VLT plugin dependency and config -->
+
 				<plugin>
 					<groupId>com.day.jcr.vault</groupId>
 					<artifactId>maven-vault-plugin</artifactId>
@@ -78,12 +85,19 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+
 	<dependencyManagement>
 		<dependencies>
 			<!-- CQ Dependencies -->
 			<dependency>
 				<groupId>com.day.cq.wcm</groupId>
 				<artifactId>cq-wcm-api</artifactId>
+				<version>5.5.0</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.day.cq</groupId>
+				<artifactId>cq-commons</artifactId>
 				<version>5.5.0</version>
 				<scope>provided</scope>
 			</dependency>
@@ -118,27 +132,69 @@
 				<groupId>org.apache.felix</groupId>
 				<artifactId>org.osgi.service.obr</artifactId>
 				<version>1.0.2</version>
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.sling</groupId>
 				<artifactId>org.apache.sling.commons.osgi</artifactId>
 				<version>2.1.0</version>
-				<type>bundle</type>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
-                <groupId>org.apache.sling</groupId>
-                <artifactId>org.apache.sling.commons.json</artifactId>
-                <version>2.0.6</version>
-                <scope>provided</scope>
-            </dependency>
+				<groupId>org.apache.sling</groupId>
+				<artifactId>org.apache.sling.commons.json</artifactId>
+				<version>2.0.6</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.sling</groupId>
+				<artifactId>org.apache.sling.commons.osgi</artifactId>
+				<version>2.1.0</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.sling</groupId>
+				<artifactId>org.apache.sling.api</artifactId>
+				<version>2.2.4</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.sling</groupId>
+				<artifactId>org.apache.sling.jcr.api</artifactId>
+				<version>2.1.0</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.day.cqse</groupId>
+				<artifactId>cqse-httpservice</artifactId>
+				<version>4.1.24</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.adobe.granite</groupId>
+				<artifactId>com.adobe.granite.jcrclustersupport</artifactId>
+				<version>0.5.0</version>
+				<scope>provided</scope>
+			</dependency>
 			<dependency>
 				<groupId>com.adobe.granite</groupId>
 				<artifactId>
 		    		com.adobe.granite.jcrclustersupport
 		    	</artifactId>
 				<version>0.5.0</version>
-				<type>bundle</type>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.6.6</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>javax.jcr</groupId>
+				<artifactId>jcr</artifactId>
+				<version>2.0</version>
+				<scope>provided</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

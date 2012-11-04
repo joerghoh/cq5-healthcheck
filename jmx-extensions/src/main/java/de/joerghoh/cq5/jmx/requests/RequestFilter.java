@@ -29,145 +29,139 @@ import org.slf4j.LoggerFactory;
 
 import com.day.cq.wcm.api.Page;
 
-
 /**
  * RequestFilter -- provide information about requests
+ * 
  * @author joerg
- *
- * This service maintains a set of services to deliver information about incoming requests.
- * These services are then exported as MBeans via JMX Whiteboard.
- *
+ * 
+ *         This service maintains a set of services to deliver information about
+ *         incoming requests. These services are then exported as MBeans via JMX
+ *         Whiteboard.
  */
-
-@Component(immediate=true)
+@Component(immediate = true)
 @Service
-@Properties({
-	@Property(name="sling.filter.scope", value="request")
-})
+@Properties({ @Property(name = "sling.filter.scope", value = "request") })
 public class RequestFilter implements Filter {
-	
+
 	private static String MBEAN_PREFIX = "de.joerghoh.cq5.jmx.requests";
-	
+
 	private Logger log = LoggerFactory.getLogger(RequestFilter.class);
-	
-	private Map<String, ServiceRegistration> services = new HashMap<String,ServiceRegistration>();
-	
+
+	private Map<String, ServiceRegistration> services = new HashMap<String, ServiceRegistration>();
+
 	private BundleContext bundleContext;
-	
+
 	private boolean shutdownInProgress = false;
-	
-	
+
 	// livecycle stuff
-	
-	
+
 	@Activate
-	protected void activate (ComponentContext ctx) {
+	protected void activate(ComponentContext ctx) {
 		bundleContext = ctx.getBundleContext();
 		shutdownInProgress = false;
 	}
-	
+
 	@Deactivate
 	protected void deactivate() {
 		shutdownInProgress = true;
-		for (ServiceRegistration sr: services.values()) {
+		for (ServiceRegistration sr : services.values()) {
 			sr.unregister();
 		}
 	}
-	
+
 	public void init(FilterConfig config) throws ServletException {
-	
+
 	}
 
 	public void destroy() {
-		
+
 	}
 
-	
 	// implementation
-	
+
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
-		
-			RequestInformationImpl rii = null;
-		
-			if (! shutdownInProgress) {
-				SlingHttpServletRequest req = (SlingHttpServletRequest) request;
-				Resource r = req.getResource();
-				String contentType = req.getResponseContentType();
-				Page p = r.adaptTo(Page.class);
-				String templatePath = "";
-				if (p != null) {
-					templatePath = p.getTemplate().getPath();
-				} else {
-					// not a page
-				}
-				
-				// If there is no service defined for this mime type yet, we register it
-				String designator = buildMBeanName(contentType, templatePath);
-				if (! services.containsKey(designator)) {
-					registerReportingService (designator, contentType);
-				}
 
-				// TODO cache service objects for performance???
+		RequestInformationImpl rii = null;
 
-				ServiceRegistration reg = services.get(designator);
-				Object o = bundleContext.getService(reg.getReference());
-				if (o instanceof RequestInformationImpl) {
-					rii = (RequestInformationImpl) o;
-				} else {
-					log.error ("Something went wrong with the retrieval of the service object for meban "+ designator);
-					rii = null;
-				}
+		if (!shutdownInProgress) {
+			SlingHttpServletRequest req = (SlingHttpServletRequest) request;
+			Resource r = req.getResource();
+			String contentType = req.getResponseContentType();
+			Page p = r.adaptTo(Page.class);
+			String templatePath = "";
+			if (p != null) {
+				templatePath = p.getTemplate().getPath();
+			} else {
+				// not a page
 			}
-			
-			// forward the request down the chain and collect timing information
-			long t1 = System.currentTimeMillis();
-			chain.doFilter(request, response);
-			long t2 = System.currentTimeMillis();
-			
-			if (! shutdownInProgress && rii != null) {
-				rii.update(t2-t1);
+
+			// If there is no service defined for this mime type yet, we
+			// register it
+			String designator = buildMBeanName(contentType, templatePath);
+			if (!services.containsKey(designator)) {
+				registerReportingService(designator, contentType);
 			}
-		
+
+			// TODO cache service objects for performance???
+
+			ServiceRegistration reg = services.get(designator);
+			Object o = bundleContext.getService(reg.getReference());
+			if (o instanceof RequestInformationImpl) {
+				rii = (RequestInformationImpl) o;
+			} else {
+				log.error("Something went wrong with the retrieval of the service object for meban "
+						+ designator);
+				rii = null;
+			}
+		}
+
+		// forward the request down the chain and collect timing information
+		long t1 = System.currentTimeMillis();
+		chain.doFilter(request, response);
+		long t2 = System.currentTimeMillis();
+
+		if (!shutdownInProgress && rii != null) {
+			rii.update(t2 - t1);
+		}
+
 	}
 
-
-	
 	// helper
-	
+
 	/**
 	 * Create a valid ObjectName for this specific combination
-	 * @param mimetype -- the mimetype for the request
-	 * @param templatePath -- the path to the template (if provided)
+	 * 
+	 * @param mimetype
+	 *            -- the mimetype for the request
+	 * @param templatePath
+	 *            -- the path to the template (if provided)
 	 * @return a valid name which can be converted to an ObjectName
 	 */
-	private String buildMBeanName (String mimetype, String templatePath) {
+	private String buildMBeanName(String mimetype, String templatePath) {
 		if (templatePath.equals("")) {
 			return MBEAN_PREFIX + ".mime:type=" + mimetype;
 		} else {
-			return MBEAN_PREFIX + ".template:template="+ templatePath;
+			return MBEAN_PREFIX + ".template:template=" + templatePath;
 		}
-		
+
 	}
-	
-	
-	private  ServiceRegistration registerReportingService (String mbeanName, String mimeType) {
-		
+
+	private ServiceRegistration registerReportingService(String mbeanName,
+			String mimeType) {
+
 		RequestInformationImpl rii = new RequestInformationImpl(mimeType);
-		Dictionary<String,String> props = new Hashtable<String,String>();
+		Dictionary<String, String> props = new Hashtable<String, String>();
 		props.put("jmx.objectname", mbeanName);
-		
+
 		log.info("Registering mbean for " + mbeanName);
-		
-		ServiceRegistration reg = bundleContext.registerService(RequestInformationMBean.class.getName(), rii, props);
+
+		ServiceRegistration reg = bundleContext.registerService(
+				RequestInformationMBean.class.getName(), rii, props);
 		services.put(mbeanName, reg);
-		
+
 		return reg;
-		
+
 	}
-	
-	
-	
-	
 
 }

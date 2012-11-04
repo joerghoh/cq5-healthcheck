@@ -11,11 +11,11 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-    <artifactId>app</artifactId>
+	<artifactId>app</artifactId>
 	<packaging>jar</packaging>
-	
+
 	<name>CQ5 - Health Check - Application Package</name>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>de.joerghoh.cq5.healthcheck</groupId>
@@ -56,51 +56,35 @@
 		<plugins>
 
 			<plugin>
-                               <groupId>com.day.jcr.vault</groupId>
-                               <artifactId>content-package-maven-plugin</artifactId>
-                               <version>0.0.18</version>
-                               <extensions>true</extensions>
-                               <configuration>
-                                       <group>HealthCheck</group>
-                                       <name>healthcheck</name>
-                                       <requiresRoot>true</requiresRoot>
+				<groupId>com.day.jcr.vault</groupId>
+				<artifactId>maven-vault-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<group>HealthCheck</group>
+					<requiresRoot>true</requiresRoot>
 
-                                       <builtContentDirectory>jcr_root</builtContentDirectory>
-                                       <targetURL>http://localhost:4502/crx/packmgr/service.jsp</targetURL>
+                    <embeddeds>
+						<embedded>
+							<groupId>de.joerghoh.cq5.healthcheck</groupId>
+							<artifactId>jmx-extension</artifactId>
+							<target>/apps/healthcheck/install</target>
+						</embedded>
+						<embedded>
+							<groupId>de.joerghoh.cq5.healthcheck</groupId>
+							<artifactId>core</artifactId>
+							<target>/apps/healthcheck/install</target>
+						</embedded>
+					</embeddeds>
 
-                                       <install>true</install>
-                                       <verbose>true</verbose>
-
-                                       <packageFile>${project.build.directory}/${project.artifactId}-${project.version}.zip</packageFile>
-
-                                       <version>${project.version}</version>
-                                       <properties>
-                                               <acHandling>overwrite</acHandling>
-                                       </properties>
-
-                                       <embeddeds>
-                                               <embedded>
-                                                       <groupId>de.joerghoh.cq5.healthcheck</groupId>
-                                                       <artifactId>jmx-extension</artifactId>
-                                                       <target>/apps/healthcheck/install</target>
-                                               </embedded>
-                                               <embedded>
-                                                       <groupId>de.joerghoh.cq5.healthcheck</groupId>
-                                                       <artifactId>core</artifactId>
-                                                       <target>/apps/healthcheck/install</target>
-                                               </embedded>
-                                       </embeddeds>
-
-                               </configuration>
-                               <executions>
-                                       <execution>
-                                               <goals>
-                                                       <goal>package</goal>
-                                                       <goal>install</goal>
-                                               </goals>
-                                       </execution>
-                               </executions>
-                       </plugin>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>package</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
 		</plugins>
 	</build>
