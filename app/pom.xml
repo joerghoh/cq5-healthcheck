@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>de.joerghoh.cq5.healthcheck</groupId>
-		<artifactId>de.joerghoh.cq5.healthcheck.parent</artifactId>
+		<artifactId>parent</artifactId>
 		<relativePath>../parent/pom.xml</relativePath>
-		<version>0.1-SNAPSHOT</version>
+		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<packaging>content-package</packaging>
-
-
+    <artifactId>app</artifactId>
+	<packaging>jar</packaging>
+	
+	<name>CQ5 - Health Check - Application Package</name>
+	
 	<dependencies>
 		<dependency>
 			<groupId>de.joerghoh.cq5.healthcheck</groupId>
@@ -52,56 +56,52 @@
 		<plugins>
 
 			<plugin>
-				<groupId>com.day.jcr.vault</groupId>
-				<artifactId>content-package-maven-plugin</artifactId>
-				<version>0.0.18</version>
-				<extensions>true</extensions>
-				<configuration>
-					<group>HealthCheck</group>
-					<name>healthcheck</name>
-					<requiresRoot>true</requiresRoot>
+                               <groupId>com.day.jcr.vault</groupId>
+                               <artifactId>content-package-maven-plugin</artifactId>
+                               <version>0.0.18</version>
+                               <extensions>true</extensions>
+                               <configuration>
+                                       <group>HealthCheck</group>
+                                       <name>healthcheck</name>
+                                       <requiresRoot>true</requiresRoot>
 
-					<builtContentDirectory>jcr_root</builtContentDirectory>
-					<targetURL>http://localhost:4502/crx/packmgr/service.jsp</targetURL>
+                                       <builtContentDirectory>jcr_root</builtContentDirectory>
+                                       <targetURL>http://localhost:4502/crx/packmgr/service.jsp</targetURL>
 
-					<install>true</install>
-					<verbose>true</verbose>
+                                       <install>true</install>
+                                       <verbose>true</verbose>
 
-					<packageFile>${project.build.directory}/${project.artifactId}-${project.version}.zip</packageFile>
+                                       <packageFile>${project.build.directory}/${project.artifactId}-${project.version}.zip</packageFile>
 
-					<version>${project.version}</version>
-					<properties>
-						<acHandling>overwrite</acHandling>
-					</properties>
+                                       <version>${project.version}</version>
+                                       <properties>
+                                               <acHandling>overwrite</acHandling>
+                                       </properties>
 
-					<embeddeds>
-						<embedded>
-							<groupId>de.joerghoh.cq5.healthcheck</groupId>
-							<artifactId>jmx-extension</artifactId>
-							<target>/apps/healthcheck/install</target>
-						</embedded>
-						<embedded>
-							<groupId>de.joerghoh.cq5.healthcheck</groupId>
-							<artifactId>core</artifactId>
-							<target>/apps/healthcheck/install</target>
-						</embedded>
-					</embeddeds>
+                                       <embeddeds>
+                                               <embedded>
+                                                       <groupId>de.joerghoh.cq5.healthcheck</groupId>
+                                                       <artifactId>jmx-extension</artifactId>
+                                                       <target>/apps/healthcheck/install</target>
+                                               </embedded>
+                                               <embedded>
+                                                       <groupId>de.joerghoh.cq5.healthcheck</groupId>
+                                                       <artifactId>core</artifactId>
+                                                       <target>/apps/healthcheck/install</target>
+                                               </embedded>
+                                       </embeddeds>
 
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>package</goal>
-							<goal>install</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+                               </configuration>
+                               <executions>
+                                       <execution>
+                                               <goals>
+                                                       <goal>package</goal>
+                                                       <goal>install</goal>
+                                               </goals>
+                                       </execution>
+                               </executions>
+                       </plugin>
 
 		</plugins>
 	</build>
-
-
-	<name>Healthstatus application package</name>
-	<artifactId>de.joerghoh.cq5.healthcheck.app</artifactId>
 </project>

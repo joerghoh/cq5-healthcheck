@@ -74,13 +74,11 @@ public class RequestFilter implements Filter {
 		}
 	}
 	
-	public void init(FilterConfig arg0) throws ServletException {
-		// TODO Auto-generated method stub
-		
+	public void init(FilterConfig config) throws ServletException {
+	
 	}
 
 	public void destroy() {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -109,6 +107,8 @@ public class RequestFilter implements Filter {
 				if (! services.containsKey(designator)) {
 					registerReportingService (designator, contentType);
 				}
+
+				// TODO cache service objects for performance???
 
 				ServiceRegistration reg = services.get(designator);
 				Object o = bundleContext.getService(reg.getReference());

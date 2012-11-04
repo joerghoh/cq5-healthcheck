@@ -6,9 +6,9 @@
 	<groupId>de.joerghoh.cq5</groupId>
 	<artifactId>reactor</artifactId>
 	<packaging>pom</packaging>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.0.1-SNAPSHOT</version>
 
-	<name>Sample Project Reactor</name>
+	<name>CQ5 - Health Check - Reactor</name>
 
 	<!-- settings for local deployment -->
 	<properties>
@@ -21,8 +21,8 @@
 	<modules>
 		<module>parent</module>
 		<module>core</module>
-		<module>app</module>
 		<module>jmx-extensions</module>
+		<module>app</module>
 	</modules>
 
 	<repositories>
@@ -37,14 +37,6 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
-		</repository>
-		<repository>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>central</id>
-			<name>Maven Repository Switchboard</name>
-			<url>http://repo1.maven.org/maven2</url>
 		</repository>
 	</repositories>
 
@@ -62,23 +54,4 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-
-	<profiles>
-		<!-- profile for deployment to shared development instance -->
-		<profile>
-			<id>devDeploy</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<properties>
-				<depl.user>admin</depl.user>
-				<depl.password>admin</depl.password>
-				<depl.host>IP_OF_DEV_SERVER</depl.host>
-				<depl.port>4502</depl.port>
-			</properties>
-		</profile>
-
-		<!-- add additional profiles here -->
-
-	</profiles>
 </project>

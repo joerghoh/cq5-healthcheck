@@ -131,16 +131,12 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 		try {
 			return server.getAttribute (name,attributeName);
 		} catch (AttributeNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InstanceNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (MBeanException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ReflectionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;

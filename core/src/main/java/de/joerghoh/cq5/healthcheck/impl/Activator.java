@@ -18,7 +18,6 @@ public class Activator implements BundleActivator {
      */
     public void start(BundleContext context) throws Exception {
         log.info(context.getBundle().getSymbolicName() + " started");
-        // TODO add initialization code
     }
 
     /*
@@ -27,6 +26,5 @@ public class Activator implements BundleActivator {
      */
     public void stop(BundleContext context) throws Exception {
         log.info(context.getBundle().getSymbolicName() + " stopped");
-        //TODO add cleanup code
     }
 }
