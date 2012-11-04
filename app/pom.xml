@@ -12,7 +12,7 @@
 	</parent>
 
 	<artifactId>app</artifactId>
-	<packaging>jar</packaging>
+	<packaging>content-package</packaging>
 
 	<name>CQ5 - Health Check - Application Package</name>
 
