@@ -20,8 +20,7 @@ import org.osgi.service.component.ComponentContext;
 		)
 @Service (value=BundleStatusMBean.class)
 @Properties({
-	@Property (name="jmx.objectname",value="de.joerghoh.cq5.jmx:id=bundles"),
-	@Property(name="event.topics",value={"*"})
+	@Property (name="jmx.objectname",value="de.joerghoh.cq5.jmx:id=bundles")
 })
 public class BundleStatusImpl implements BundleStatusMBean {
 	
