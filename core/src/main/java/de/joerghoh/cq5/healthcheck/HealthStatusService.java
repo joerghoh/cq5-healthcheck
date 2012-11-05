@@ -1,13 +1,11 @@
 package de.joerghoh.cq5.healthcheck;
 
 /**
- * The HealthStatusService
+ * Queries all registered HealthStatusProvider services and consolidates the
+ * various results into a single result.
+ * 
  * @author joerg
- *
- * This service queries all registered HealthStatusProvider services and consolidates
- * the various results into a single result.
  */
 public interface HealthStatusService {
-
 	public SystemHealthStatus getOverallStatus();
 }

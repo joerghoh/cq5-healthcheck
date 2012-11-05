@@ -5,12 +5,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.joerghoh.cq5.healthcheck.HealthStatus;
-import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
-
 public class SystemHealthStatus {
 	
-	Logger log = LoggerFactory.getLogger(SystemHealthStatus.class);
+	private Logger log = LoggerFactory.getLogger(SystemHealthStatus.class);
 	
 	private List<HealthStatus> results;
 	private int status;
@@ -38,5 +35,4 @@ public class SystemHealthStatus {
 	public String getMonitoringMessage () {
 		return monitoringMessage;
 	}
-	
 }

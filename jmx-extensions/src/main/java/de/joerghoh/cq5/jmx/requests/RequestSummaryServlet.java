@@ -33,15 +33,16 @@ public class RequestSummaryServlet extends SlingAllMethodsServlet {
 	@Override
 	public void doGet(SlingHttpServletRequest request,
 			SlingHttpServletResponse response) {
-		
+
 		MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-		
+
 		ObjectName query;
 		try {
 			JSONWriter result = new JSONWriter(response.getWriter()).array();
 			query = new ObjectName(MBEANFILTER);
 			Set<ObjectName> mbeans = server.queryNames(query, null);
-			//log.info("Retrieving information from " + mbeans.size() + " mbeans");
+			// log.info("Retrieving information from " + mbeans.size() +
+			// " mbeans");
 			for (ObjectName mbean : mbeans) {
 				String mbeanName = mbean.toString();
 				String requestCounter = String.valueOf(server.getAttribute(

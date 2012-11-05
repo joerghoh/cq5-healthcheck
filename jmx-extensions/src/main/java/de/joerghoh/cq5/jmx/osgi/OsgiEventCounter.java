@@ -15,14 +15,13 @@ import org.osgi.service.event.EventHandler;
 		description="Exposes details on the number of OSGI events",
 		name="de.joerghoh.cq5.jmx.osgi.OsgiEventCounter"
 		)
-@Service (value={OsgiCounterMBean.class,EventHandler.class})
+@Service (value={OsgiEventCounterMBean.class,EventHandler.class})
 @Properties({
 	@Property (name="jmx.objectname",value="de.joerghoh.cq5.jmx.osgi:id=OsgiEventCounter"),
 	@Property (name="event.topics", value={"org/apache/sling/*","com/day/*","org/osgi/framework/*"})
 })
-public class OsgiEventCounter implements OsgiCounterMBean, EventHandler {
+public class OsgiEventCounter implements OsgiEventCounterMBean, EventHandler {
 
-	
 	long totalCounter = 0;
 	
 	// Resource Events

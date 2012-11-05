@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspaceFilter version="1.0">
     <filter root="/apps/healthcheck">
-        <exclude pattern="/apps/healthcheck/jcr:system"/>
-        <exclude pattern="/apps/healthcheck/var/classes"/>
         <exclude pattern="^.*/rep:accessControl"/>
     </filter>
 </workspaceFilter>

@@ -20,14 +20,14 @@ import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
 public class MBeanStatusProvider implements HealthStatusProvider {
 
 	private Logger log = LoggerFactory.getLogger(MBeanStatusProvider.class);
-	
+
 	private ObjectName name;
 	private ValueMap props;
-	
+
 	private String statusMessage = "";
-	
+
 	private MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-	
+
 	/**
 	 * is called whenever the status must be calculated
 	 */
@@ -36,9 +36,9 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 		return new HealthStatus(status, statusMessage, name.toString());
 	}
 
-	
 	/**
 	 * calculate the overall status of the service
+	 * 
 	 * @return the overall status
 	 */
 	private int getStatus() {
@@ -47,36 +47,42 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 		statusMessage = "";
 		while (iter.hasNext()) {
 			String value = iter.next();
-			
+
 			/*
-			 * value might be: "my.JMX.propertyName.warn.>", and we need the tripl of
-			 * "jmxAttributeName","level" and "type of comparison".
-			 * The jmxAttributeName might contain dots, so we need to reverse to use String.split()
+			 * value might be: "my.JMX.propertyName.warn.>", and we need the
+			 * tripl of "jmxAttributeName","level" and "type of comparison". The
+			 * jmxAttributeName might contain dots, so we need to reverse to use
+			 * String.split()
 			 */
-			
-			String key = new StringBuffer(value).reverse().toString(); // revert it
+
+			String key = new StringBuffer(value).reverse().toString(); // revert
+																		// it
 			String[] split = key.split("\\.", 3);
 			if (split.length != 3) {
 				continue;
 			}
-			String jmxAttributeName = new StringBuffer(split[2]).reverse().toString();
+			String jmxAttributeName = new StringBuffer(split[2]).reverse()
+					.toString();
 			String level = new StringBuffer(split[1]).reverse().toString();
-			String comparison =  new StringBuffer(split[0]).reverse().toString();
-			
+			String comparison = new StringBuffer(split[0]).reverse().toString();
+
 			// read the correct value via JMX
-			Object jmxValue = getAttributeValue (jmxAttributeName);
+			Object jmxValue = getAttributeValue(jmxAttributeName);
 			if (jmxValue == null) {
-				log.info("Ignoring property "+ value + "(no such a JMX attribute "+ jmxAttributeName + ")");
+				log.info("Ignoring property " + value
+						+ "(no such a JMX attribute " + jmxAttributeName + ")");
 				continue;
 			}
 			String jmxStringValue = jmxValue.toString();
-			long jmxLongValue = Long.parseLong (getAttributeValue (jmxAttributeName).toString());
-			
+			long jmxLongValue = Long.parseLong(getAttributeValue(
+					jmxAttributeName).toString());
+
 			String stringValue = (String) props.get(value);
 			long longValue = Long.parseLong(stringValue);
-			
-			log.debug("value="+value+",stringValue="+stringValue+",jmxStringValue="+jmxStringValue);
-			
+
+			log.debug("value=" + value + ",stringValue=" + stringValue
+					+ ",jmxStringValue=" + jmxStringValue);
+
 			// what would be the statusCode if we have a match?
 			int statusCode = OK;
 			if (level.equals("warn")) {
@@ -84,10 +90,10 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 			} else if (level.equals("critical")) {
 				statusCode = CRITICAL;
 			} else {
-				log.info("Ignoring property (invalid level): "+ value);
+				log.info("Ignoring property (invalid level): " + value);
 				continue;
 			}
-			
+
 			// do the comparison
 			boolean match = false;
 			if (comparison.equals(">")) {
@@ -99,37 +105,37 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 			} else if (comparison.equals("equals")) {
 				match = (stringValue.equals(jmxStringValue));
 			} else if (comparison.equals("notequals")) {
-				match = (! stringValue.equals(jmxStringValue));
+				match = (!stringValue.equals(jmxStringValue));
 			} else {
-				log.info("Ignoring property (invalid comparison): "+ value);
+				log.info("Ignoring property (invalid comparison): " + value);
 				continue;
 			}
-			
+
 			// if we have a WARN or CRITICAL state for this value, report it
 			if (match) {
-				if (statusMessage.length() > 0 ) {
+				if (statusMessage.length() > 0) {
 					statusMessage += ", ";
 				}
 				statusMessage += jmxAttributeName + "=" + jmxStringValue;
 			}
-			
+
 			// if we have a match, update the overall status
 			if (match && statusCode > accumulatedStatus) {
 				accumulatedStatus = statusCode;
 			}
 		}
-		
 		return accumulatedStatus;
 	}
-	
+
 	/**
 	 * small wrapper method to read the value via JMX
+	 * 
 	 * @param attributeName
 	 * @return
 	 */
-	private Object getAttributeValue (String attributeName) {
+	private Object getAttributeValue(String attributeName) {
 		try {
-			return server.getAttribute (name,attributeName);
+			return server.getAttribute(name, attributeName);
 		} catch (AttributeNotFoundException e) {
 			e.printStackTrace();
 		} catch (InstanceNotFoundException e) {
@@ -141,10 +147,9 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 		}
 		return null;
 	}
-	
-	public MBeanStatusProvider (ObjectName mbean,ValueMap properties) {
+
+	public MBeanStatusProvider(ObjectName mbean, ValueMap properties) {
 		name = mbean;
 		props = properties;
 	}
-	
 }

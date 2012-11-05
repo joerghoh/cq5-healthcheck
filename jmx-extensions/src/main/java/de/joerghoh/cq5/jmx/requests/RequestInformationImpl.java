@@ -4,15 +4,14 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class RequestInformationImpl implements RequestInformationMBean {
 
-	
 	private AtomicLong counter = new AtomicLong(0);
-	
+
 	private AtomicLong duration = new AtomicLong(0);
-	
+
 	private String mimeType;
-	
+
 	// MBean interface
-	
+
 	public String getMimeType() {
 		return mimeType;
 	}
@@ -24,22 +23,16 @@ public class RequestInformationImpl implements RequestInformationMBean {
 	public long getTotalRequestDuration() {
 		return duration.get();
 	}
-	
-	
+
 	// protected interface
-	
-	protected RequestInformationImpl (String mimeType) {
+
+	protected RequestInformationImpl(String mimeType) {
 		this.mimeType = mimeType;
 	}
-	
-	
+
 	protected void update(long millis) {
 		counter.incrementAndGet();
 		duration.addAndGet(millis);
-		
+
 	}
-
-
-	
-	
 }
