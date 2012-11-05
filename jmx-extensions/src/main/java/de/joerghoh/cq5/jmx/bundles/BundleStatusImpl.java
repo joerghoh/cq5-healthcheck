@@ -25,6 +25,7 @@ public class BundleStatusImpl implements BundleStatusMBean {
 		int activeBundleCount = 0;
 		for (Bundle b : bundles) {
 
+			@SuppressWarnings("unchecked")
 			Dictionary<String, String> headers = b.getHeaders();
 			boolean isFragment = (headers.get("Fragment-Host") != null);
 			boolean isActive = (b.getState() == Bundle.ACTIVE);
@@ -46,6 +47,7 @@ public class BundleStatusImpl implements BundleStatusMBean {
 		int fragmentBundleCount = 0;
 		for (Bundle b : bundles) {
 
+			@SuppressWarnings("unchecked")
 			Dictionary<String, String> headers = b.getHeaders();
 			boolean isFragment = (headers.get("Fragment-Host") != null);
 
