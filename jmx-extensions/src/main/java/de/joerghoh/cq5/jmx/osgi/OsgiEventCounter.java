@@ -26,6 +26,8 @@ public class OsgiEventCounter implements OsgiCounterMBean, EventHandler {
 	long totalCounter = 0;
 	
 	// Resource Events
+	// TODO make events configurable??
+	
 	private static String SLING_RESOURCE_EVENTS = "org/apache/sling/api/resource/Resource";
 	long resourceCounter = 0;
 	

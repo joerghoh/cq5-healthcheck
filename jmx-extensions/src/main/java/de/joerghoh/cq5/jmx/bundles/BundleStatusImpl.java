@@ -25,6 +25,8 @@ import org.osgi.service.component.ComponentContext;
 public class BundleStatusImpl implements BundleStatusMBean {
 	
 	private BundleContext bctx;
+	
+	// TODO implement event listening??
 
 	public int getActiveBundles() {
 		Bundle[] bundles = bctx.getBundles();

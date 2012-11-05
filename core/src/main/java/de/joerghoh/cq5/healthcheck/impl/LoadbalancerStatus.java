@@ -103,7 +103,6 @@ public class LoadbalancerStatus extends SlingSafeMethodsServlet implements Clust
 
 	public void unbindRepository() {
 		log.warn ("Repository is unbound, this should not happen!");
-		
 	}
 	
 	/** SCR **/
