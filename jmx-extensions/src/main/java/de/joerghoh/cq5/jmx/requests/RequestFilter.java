@@ -154,7 +154,7 @@ public class RequestFilter implements Filter {
 		Dictionary<String, String> props = new Hashtable<String, String>();
 		props.put("jmx.objectname", mbeanName);
 
-		log.info("Registering mbean for " + mbeanName);
+		log.debug("Registering mbean for " + mbeanName);
 
 		ServiceRegistration reg = bundleContext.registerService(
 				RequestInformationMBean.class.getName(), rii, props);
