@@ -26,9 +26,9 @@
 </head>
 <body>
     <h1>Overview</h1>
-    <p><b>Overall Status:</b>${systemHealthStatus.status}</p>
+    <p><b>Overall Status:</b> ${systemHealthStatus.status}</p>
     <c:if test="${not empty systemHealthStatus.monitoringMessage}">
-    <p><b>Caution:</b>${systemHealthStatus.monitoringMessage}</p>
+    <p><b>Caution:</b> ${systemHealthStatus.monitoringMessage}</p>
     </c:if>
     
     <h1>Details</h1>
