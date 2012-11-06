@@ -11,14 +11,15 @@
 <head>
     <title>cq5-healthcheck</title>
     <style media="screen" type="text/css">
+    	td.status {
+    		text-align: center;
+    	}
         td.level_warn {
             background-color: yellow;
         }
-        
         td.level_critical {
             background-color: red;
         }
-        
         td.level_ok{
             background-color: green;
         }
@@ -42,7 +43,7 @@
         <tr>
             <td>${status.provider}</td>
             <td>${status.message}&nbsp;</td>
-            <td class="level_${fn:toLowerCase(status.statusText)}">${status.statusText}</td>
+            <td class="status level_${fn:toLowerCase(status.statusText)}">${status.statusText}</td>
         </tr>
         </c:forEach>
     </table>
