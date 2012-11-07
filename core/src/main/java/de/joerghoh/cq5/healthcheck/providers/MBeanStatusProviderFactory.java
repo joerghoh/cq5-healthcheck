@@ -211,8 +211,6 @@ public class MBeanStatusProviderFactory implements EventHandler {
 			String mbeanName = mbean.toString();
 			if (mbeanExists(mbean)) {
 
-				log.info("Instantiate healtcheck for MBean " + mbeanName);
-
 				MBeanStatusProvider msp = new MBeanStatusProvider(mbean, props);
 				Dictionary<String, String> params = new Hashtable<String, String>();
 				// params.put(Constants.SERVICE_PID, pid );
