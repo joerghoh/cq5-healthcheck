@@ -247,7 +247,7 @@ public class MBeanStatusProviderFactory implements EventHandler {
 	}
 
 	private ObjectName buildObjectName(Resource resource) {
-		String mbeanName = resource.getName().replace("_", ":");
+		String mbeanName = resource.getName().replaceFirst("_", ":");
 		ObjectName mbean = null;
 		try {
 			mbean = new ObjectName(mbeanName);
