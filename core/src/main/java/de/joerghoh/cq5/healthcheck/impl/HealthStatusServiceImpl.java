@@ -82,7 +82,6 @@ public class HealthStatusServiceImpl implements HealthStatusService {
 			message = "Only " + results.size() + " out of "
 					+ bundleNumberThreshold + " monitoring services available";
 		}
-		log.info("Processed " + results.size() + " providers");
 		return new SystemHealthStatus(finalStatus, results, message);
 	}
 
