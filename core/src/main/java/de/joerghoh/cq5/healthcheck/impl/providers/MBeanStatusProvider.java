@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import de.joerghoh.cq5.healthcheck.HealthStatus;
 import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
+import de.joerghoh.cq5.healthcheck.StatusCode;
 
 public class MBeanStatusProvider implements HealthStatusProvider {
 
@@ -45,7 +46,7 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 	 * is called whenever the status must be calculated
 	 */
 	public HealthStatus getHealthStatus() {
-		int status = getStatus();
+		StatusCode status = getStatus();
 		return new HealthStatus(status, statusMessage, mbean.toString());
 	}
 
@@ -54,8 +55,8 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 	 * 
 	 * @return the overall status
 	 */
-	private int getStatus() {
-		int accumulatedStatus = OK;
+	private StatusCode getStatus() {
+		StatusCode accumulatedStatus = StatusCode.OK;
 		Iterator<String> iter = properties.keySet().iterator();
 		statusMessage = "";
 		while (iter.hasNext()) {
@@ -76,11 +77,11 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 			final String comparisonAttributeName = new StringBuffer(split[2]).reverse().toString();
 			// what would be the statusCode if we have a match?
 			final String comparisonLevel = new StringBuffer(split[1]).reverse().toString();
-			int statusCode = OK;
+			StatusCode statusCode = StatusCode.OK;
 			if (comparisonLevel.equals("warn")) {
-				statusCode = WARN;
+				statusCode = StatusCode.WARN;
 			} else if (comparisonLevel.equals("critical")) {
-				statusCode = CRITICAL;
+				statusCode = StatusCode.CRITICAL;
 			} else {
 				log.warn("Ignoring property (invalid level): " + propertyName);
 				continue;
@@ -117,7 +118,7 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 			}
 
 			// if we have a match, update the overall status
-			if (match && statusCode > accumulatedStatus) {
+			if (match && statusCode.compareTo(accumulatedStatus) > 0) {
 				accumulatedStatus = statusCode;
 			}
 		}

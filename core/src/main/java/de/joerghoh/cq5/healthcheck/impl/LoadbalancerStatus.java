@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import com.day.cq.jcrclustersupport.ClusterAware;
 
 import de.joerghoh.cq5.healthcheck.HealthStatusService;
+import de.joerghoh.cq5.healthcheck.StatusCode;
 
 /**
  * A servlet, which returns the actual status suitable for a loadbalancer.
@@ -62,9 +63,8 @@ public class LoadbalancerStatus extends SlingSafeMethodsServlet implements
 			SlingHttpServletResponse response) {
 
 		try {
-			String systemStatusString = statusService.getOverallStatus()
-					.getStatus();
-			boolean allOK = systemStatusString.equals("OK");
+			StatusCode status = statusService.getOverallStatus().getStatus();
+			boolean allOK = status == StatusCode.OK;
 			boolean statusOK = false;
 
 			if (loadbalancerStrategy.equals("ActivePassive")) {
@@ -79,9 +79,9 @@ public class LoadbalancerStatus extends SlingSafeMethodsServlet implements
 
 			response.setContentType("text/html");
 			if (statusOK) {
-				response.getOutputStream().print("OK");
+				response.getOutputStream().print(StatusCode.OK.toString());
 			} else {
-				response.getOutputStream().print("NotOK");
+				response.getOutputStream().print(StatusCode.WARN.toString());
 			}
 			response.getOutputStream().flush();
 		} catch (IOException e) {

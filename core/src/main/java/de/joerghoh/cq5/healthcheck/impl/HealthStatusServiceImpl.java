@@ -19,7 +19,8 @@ import org.slf4j.LoggerFactory;
 import de.joerghoh.cq5.healthcheck.HealthStatus;
 import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
 import de.joerghoh.cq5.healthcheck.HealthStatusService;
-import de.joerghoh.cq5.healthcheck.SystemHealthStatus;
+import de.joerghoh.cq5.healthcheck.StatusCode;
+import de.joerghoh.cq5.healthcheck.SystemStatus;
 
 /**
  * @author joerg
@@ -42,15 +43,15 @@ public class HealthStatusServiceImpl implements HealthStatusService {
 	/**
 	 * Get overall status
 	 */
-	public SystemHealthStatus getOverallStatus() {
+	public SystemStatus getOverallStatus() {
 
-		int finalStatus = 0;
+		StatusCode finalStatus = StatusCode.OK;
 		List<HealthStatus> results = new ArrayList<HealthStatus>();
 		String message = "";
 
 		for (HealthStatusProvider p : providers) {
 			HealthStatus s = p.getHealthStatus();
-			if (s.getStatus() > finalStatus) {
+			if (s.getStatus().compareTo(finalStatus) > 0) {
 				finalStatus = s.getStatus();
 			}
 			results.add(s);
@@ -58,12 +59,12 @@ public class HealthStatusServiceImpl implements HealthStatusService {
 
 		// if not all requested services are available, go critical!
 		if (results.size() < bundleNumberThreshold) {
-			finalStatus = HealthStatusProvider.CRITICAL;
+			finalStatus = StatusCode.CRITICAL;
 			message = "Only " + results.size() + " out of "
 					+ bundleNumberThreshold + " monitoring services available";
 		}
 		log.info("Processed " + results.size() + " providers");
-		return new SystemHealthStatus(finalStatus, results, message);
+		return new SystemStatus(finalStatus, message, results);
 	}
 
 	/** helper routines **/

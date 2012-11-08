@@ -7,5 +7,5 @@ package de.joerghoh.cq5.healthcheck;
  * @author joerg
  */
 public interface HealthStatusService {
-	public SystemHealthStatus getOverallStatus();
+	public SystemStatus getOverallStatus();
 }
