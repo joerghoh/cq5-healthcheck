@@ -20,7 +20,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>de.joerghoh.cq5.healthcheck</groupId>
-			<artifactId>jmx-extension</artifactId>
+			<artifactId>api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -28,6 +28,12 @@
 			<artifactId>core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>de.joerghoh.cq5.healthcheck</groupId>
+			<artifactId>jmx-extension</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+        
 
 		<!-- add additional dependencies -->
 	</dependencies>
@@ -67,12 +73,17 @@
 				    <embeddeds>
 						<embedded>
 							<groupId>de.joerghoh.cq5.healthcheck</groupId>
-							<artifactId>jmx-extension</artifactId>
+							<artifactId>api</artifactId>
 							<target>/apps/healthcheck/install</target>
 						</embedded>
 						<embedded>
 							<groupId>de.joerghoh.cq5.healthcheck</groupId>
 							<artifactId>core</artifactId>
+							<target>/apps/healthcheck/install</target>
+						</embedded>
+						<embedded>
+							<groupId>de.joerghoh.cq5.healthcheck</groupId>
+							<artifactId>jmx-extension</artifactId>
 							<target>/apps/healthcheck/install</target>
 						</embedded>
 					</embeddeds>

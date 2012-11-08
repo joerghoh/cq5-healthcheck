@@ -17,6 +17,11 @@
 	<name>CQ5 - Health Check - Core</name>
 
 	<dependencies>
+	    <dependency>
+			<groupId>de.joerghoh.cq5.healthcheck</groupId>
+			<artifactId>api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>com.day.cq.wcm</groupId>
 			<artifactId>cq-wcm-api</artifactId>
@@ -92,8 +97,12 @@
 							{maven-resources}
 						</Include-Resource>
 						<Export-Package>
-							de.joerghoh.cq5.healthcheck
+							de.joerghoh.cq5.healthcheck*,
+							!de.joerghoh.cq5.healthcheck.impl
 						</Export-Package>
+						<Private-Package>
+						    de.joerghoh.cq5.healthcheck.impl*
+						</Private-Package>
 					</instructions>
 				</configuration>
 			</plugin>
