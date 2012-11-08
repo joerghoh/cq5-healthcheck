@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import com.day.cq.jcrclustersupport.ClusterAware;
 
-import de.joerghoh.cq5.healthcheck.HealthStatusService;
+import de.joerghoh.cq5.healthcheck.StatusService;
 import de.joerghoh.cq5.healthcheck.StatusCode;
 
 /**
@@ -45,7 +45,7 @@ public class LoadbalancerStatus extends SlingSafeMethodsServlet implements
 		ClusterAware {
 
 	@Reference
-	private HealthStatusService statusService;
+	private StatusService statusService;
 
 	private static final String DEFAULT_LB_STRATEGY = "ActivePassive";
 	@Property(value = DEFAULT_LB_STRATEGY, name = "Clustering strategy", description = "Specify your clustering strategy to instruct the loadbalancer. "
@@ -63,7 +63,7 @@ public class LoadbalancerStatus extends SlingSafeMethodsServlet implements
 			SlingHttpServletResponse response) {
 
 		try {
-			StatusCode status = statusService.getOverallStatus().getStatus();
+			StatusCode status = statusService.getStatus().getStatus();
 			boolean allOK = status == StatusCode.OK;
 			boolean statusOK = false;
 

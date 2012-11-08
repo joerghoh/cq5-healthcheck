@@ -16,21 +16,17 @@ import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.joerghoh.cq5.healthcheck.HealthStatus;
-import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
-import de.joerghoh.cq5.healthcheck.HealthStatusService;
+import de.joerghoh.cq5.healthcheck.Status;
 import de.joerghoh.cq5.healthcheck.StatusCode;
-import de.joerghoh.cq5.healthcheck.SystemStatus;
+import de.joerghoh.cq5.healthcheck.StatusProvider;
+import de.joerghoh.cq5.healthcheck.StatusService;
 
-/**
- * @author joerg
- */
 @Component(metatype = true, immediate = true)
-@Service(value = HealthStatusService.class)
-@Reference(name = "healthStatusProvider", referenceInterface = HealthStatusProvider.class, cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-public class HealthStatusServiceImpl implements HealthStatusService {
+@Service(value = StatusService.class)
+@Reference(name = "healthStatusProvider", referenceInterface = StatusProvider.class, cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+public class HealthStatusServiceImpl implements StatusService {
 
-	private List<HealthStatusProvider> providers = new ArrayList<HealthStatusProvider>();
+	private List<StatusProvider> providers = new ArrayList<StatusProvider>();
 	private final Logger log = LoggerFactory
 			.getLogger(HealthStatusServiceImpl.class);
 
@@ -43,14 +39,14 @@ public class HealthStatusServiceImpl implements HealthStatusService {
 	/**
 	 * Get overall status
 	 */
-	public SystemStatus getOverallStatus() {
+	public Status getStatus() {
 
 		StatusCode finalStatus = StatusCode.OK;
-		List<HealthStatus> results = new ArrayList<HealthStatus>();
+		List<Status> results = new ArrayList<Status>();
 		String message = "";
 
-		for (HealthStatusProvider p : providers) {
-			HealthStatus s = p.getHealthStatus();
+		for (StatusProvider p : providers) {
+			Status s = p.getStatus();
 			if (s.getStatus().compareTo(finalStatus) > 0) {
 				finalStatus = s.getStatus();
 			}
@@ -64,16 +60,16 @@ public class HealthStatusServiceImpl implements HealthStatusService {
 					+ bundleNumberThreshold + " monitoring services available";
 		}
 		log.info("Processed " + results.size() + " providers");
-		return new SystemStatus(finalStatus, message, results);
+		return new Status(finalStatus, message, results);
 	}
 
 	/** helper routines **/
 
-	protected void bindHealthStatusProvider(HealthStatusProvider provider) {
+	protected void bindHealthStatusProvider(StatusProvider provider) {
 		providers.add(provider);
 	}
 
-	protected void unbindHealthStatusProvider(HealthStatusProvider provider) {
+	protected void unbindHealthStatusProvider(StatusProvider provider) {
 		providers.remove(provider);
 	}
 

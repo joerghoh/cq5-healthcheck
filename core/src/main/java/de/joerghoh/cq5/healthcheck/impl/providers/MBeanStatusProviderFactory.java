@@ -35,7 +35,7 @@ import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
+import de.joerghoh.cq5.healthcheck.StatusProvider;
 
 /**
  * The MBeanStatusProvider is responsible to maintain the MBeanStatusProvider
@@ -271,7 +271,7 @@ public class MBeanStatusProviderFactory implements EventHandler {
 	private ServiceRegistration registerService(MBeanStatusProvider service,
 			Dictionary<String, String> params) {
 		return bundleContext.registerService(
-				HealthStatusProvider.class.getName(), service, params);
+				StatusProvider.class.getName(), service, params);
 	}
 
 	public void deactivateAllServices() {

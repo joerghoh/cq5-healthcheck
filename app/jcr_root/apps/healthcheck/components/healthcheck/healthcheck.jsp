@@ -2,8 +2,8 @@
 <%@include file="/libs/foundation/global.jsp"%>
 <%-- CQ5 health check component. --%>
 <%
-    HealthStatusService status = sling.getService(HealthStatusService.class);
-    SystemStatus systemStatus = status.getOverallStatus();
+    StatusService status = sling.getService(StatusService.class);
+    Status systemStatus = status.getStatus();
     pageContext.setAttribute("systemStatus", systemStatus);
 %>
 <!DOCTYPE html>

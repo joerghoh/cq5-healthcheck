@@ -16,11 +16,11 @@ import org.apache.sling.api.resource.ValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.joerghoh.cq5.healthcheck.HealthStatus;
-import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
+import de.joerghoh.cq5.healthcheck.Status;
 import de.joerghoh.cq5.healthcheck.StatusCode;
+import de.joerghoh.cq5.healthcheck.StatusProvider;
 
-public class MBeanStatusProvider implements HealthStatusProvider {
+public class MBeanStatusProvider implements StatusProvider {
 
 	private Logger log = LoggerFactory.getLogger(MBeanStatusProvider.class);
 
@@ -45,9 +45,9 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 	/**
 	 * is called whenever the status must be calculated
 	 */
-	public HealthStatus getHealthStatus() {
-		StatusCode status = getStatus();
-		return new HealthStatus(status, statusMessage, mbean.toString());
+	public Status getStatus() {
+		StatusCode status = calculateStatus();
+		return new Status(status, statusMessage, mbean.toString());
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 	 * 
 	 * @return the overall status
 	 */
-	private StatusCode getStatus() {
+	private StatusCode calculateStatus() {
 		StatusCode accumulatedStatus = StatusCode.OK;
 		Iterator<String> iter = properties.keySet().iterator();
 		statusMessage = "";
