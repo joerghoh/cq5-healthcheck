@@ -21,9 +21,9 @@ public class SystemHealthStatus {
 
 	public String getStatus() {
 		switch (status) {
-			case de.joerghoh.cq5.healthcheck.HealthStatusProvider.OK: return "OK"; 
-			case de.joerghoh.cq5.healthcheck.HealthStatusProvider.WARN: return "WARN"; 
-			case de.joerghoh.cq5.healthcheck.HealthStatusProvider.CRITICAL: return "CRITICAL";
+			case HealthStatusProvider.OK: return "OK"; 
+			case HealthStatusProvider.WARN: return "WARN"; 
+			case HealthStatusProvider.CRITICAL: return "CRITICAL";
 			default: log.error("Invalid status: " + status); return "UNKNOWN";
 		}
 	}
