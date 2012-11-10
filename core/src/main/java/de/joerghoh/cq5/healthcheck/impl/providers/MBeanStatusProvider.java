@@ -21,52 +21,78 @@
 package de.joerghoh.cq5.healthcheck.impl.providers;
 
 import java.lang.management.ManagementFactory;
-import java.util.Iterator;
+import java.util.Dictionary;
+import java.util.Set;
 
+import javax.jcr.RepositoryException;
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.sling.api.resource.ValueMap;
+import org.apache.felix.scr.annotations.Activate;
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.ConfigurationPolicy;
+import org.apache.felix.scr.annotations.Deactivate;
+import org.apache.felix.scr.annotations.Property;
+import org.apache.felix.scr.annotations.Service;
+import org.apache.sling.commons.osgi.PropertiesUtil;
+import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.joerghoh.cq5.healthcheck.HealthStatus;
 import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
 
+@Service
+@Component(label = "MBean Status Provider Factory", metatype = true, 
+	configurationFactory = true, policy = ConfigurationPolicy.REQUIRE)
 public class MBeanStatusProvider implements HealthStatusProvider {
 
-	private Logger log = LoggerFactory.getLogger(MBeanStatusProvider.class);
-
-	private ObjectName mbean;
-	private ValueMap properties;
-
-	private String statusMessage = "";
+	private static final Logger log = LoggerFactory.getLogger(MBeanStatusProvider.class);
 
 	private MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+	
+	@Property
+	private static String MBEAN_NAME = "mbean.name";
+	private String mbeanName;
+	
+	@Property
+	private static String MBEAN_PROPERTY = "mbean.property";
+	private String[] properties;
+	
+	private ObjectName mbean;
+	private String statusMessage = "";
 
 	/**
-	 * Constructor for MBeanStatusProvider.
-	 * 
-	 * @param mbean
-	 * @param properties
-	 */
-	public MBeanStatusProvider(ObjectName mbean, ValueMap properties) {
-		this.mbean = mbean;
-		this.properties = properties;
-	}
-
-	/**
-	 * is called whenever the status must be calculated
+	 * @see de.joerghoh.cq5.healthcheck.HealthStatusProvider#getHealthStatus()
 	 */
 	public HealthStatus getHealthStatus() {
 		int status = getStatus();
 		return new HealthStatus(status, statusMessage, mbean.toString());
+	}
+
+	@Activate
+	protected void activate(ComponentContext ctx) throws RepositoryException {
+
+		Dictionary<?,?> props = ctx.getProperties();
+		mbeanName = PropertiesUtil.toString(props.get(MBEAN_NAME), null);
+		properties = PropertiesUtil.toStringArray(props.get(MBEAN_PROPERTY));
+
+		mbean = buildObjectName(mbeanName);
+		if (mbean != null && mbeanExists(mbean)) {
+			log.info("Instantiate healtcheck for MBean " + mbeanName);
+		}
+	}
+
+	@Deactivate
+	protected void deactivate() {
+
 	}
 
 	/**
@@ -76,45 +102,46 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 	 */
 	private int getStatus() {
 		int accumulatedStatus = OK;
-		Iterator<String> iter = properties.keySet().iterator();
 		statusMessage = "";
-		while (iter.hasNext()) {
-			String propertyName = iter.next();
-
+		
+		for (String property : properties) {
+			
 			/*
 			 * value might be: "my.JMX.propertyName.warn.>", and we need the triple of "jmxAttributeName","level" and "type of comparison".
 			 * The jmxAttributeName might contain dots, so we need to reverse to use String.split()
 			 */
 
-			final String key = new StringBuffer(propertyName).reverse().toString(); // revert
+			final String key = new StringBuffer(property).reverse().toString(); // revert
 																					// it
-			final String[] split = key.split("\\.", 3);
-			if (split.length != 3) {
+			final String[] split = key.split("\\.", 4);
+			if (split.length != 4) {
 				// key does not match the needed configuration triple
 				continue;
 			}
-			final String comparisonAttributeName = new StringBuffer(split[2]).reverse().toString();
+			final String comparisonAttributeName = new StringBuffer(split[3]).reverse().toString();
+			
 			// what would be the statusCode if we have a match?
-			final String comparisonLevel = new StringBuffer(split[1]).reverse().toString();
+			final String comparisonLevel = new StringBuffer(split[2]).reverse().toString();
 			int statusCode = OK;
 			if (comparisonLevel.equals("warn")) {
 				statusCode = WARN;
 			} else if (comparisonLevel.equals("critical")) {
 				statusCode = CRITICAL;
 			} else {
-				log.warn("Ignoring property (invalid level): " + propertyName);
+				log.warn("Ignoring property (invalid level): " + property);
 				continue;
 			}
-			final String comparisonOperation = new StringBuffer(split[0]).reverse().toString();
+			
+			final String comparisonOperation = new StringBuffer(split[1]).reverse().toString();
 
 			// retrieve the long value for comparison
-			final String comparisonValue = properties.get(propertyName, String.class);
-			log.debug("comparsion {} for {}", propertyName, comparisonValue);
+			final String comparisonValue = new StringBuffer(split[0]).reverse().toString();
+			log.debug("comparsion {} for {}", property, comparisonValue);
 
 			// read the correct value via JMX
 			Object jmxValueObj = getAttributeValue(comparisonAttributeName);
 			if (jmxValueObj == null) {
-				log.info("Ignoring property " + propertyName + "(no such a JMX attribute " + comparisonAttributeName + ")");
+				log.info("Ignoring property " + property + "(no such a JMX attribute " + comparisonAttributeName + ")");
 				continue;
 			}
 			log.debug("jmx value = {}", jmxValueObj);
@@ -124,7 +151,7 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 			try  {
 				match = compareAttributeValue(comparisonOperation, comparisonValue, jmxValueObj);
 			} catch (RuntimeException e) {
-				log.info("Ignoring property (invalid value type): " + propertyName);
+				log.info("Ignoring property (invalid value type): " + property);
 				continue;
 			}
 
@@ -230,5 +257,22 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 			throw new RuntimeException();
 		}
 		return match;
+	}
+	
+	private ObjectName buildObjectName(String name) {
+		ObjectName mbean = null;
+		try {
+			mbean = new ObjectName(name);
+		} catch (MalformedObjectNameException e) {
+			log.error("Cannot create ObjectName " + name, e);
+		} catch (NullPointerException e) {
+			log.error("Cannot create ObjectName " + name, e);
+		}
+		return mbean;
+	}
+
+	private boolean mbeanExists(ObjectName mbean) {
+		Set<ObjectName> beans = server.queryNames(mbean, null);
+		return (beans.size() == 1);
 	}
 }
