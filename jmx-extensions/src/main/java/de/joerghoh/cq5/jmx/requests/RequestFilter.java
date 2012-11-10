@@ -110,10 +110,10 @@ public class RequestFilter implements Filter {
 			String contentType = req.getResponseContentType();
 			Page p = r.adaptTo(Page.class);
 			String templatePath = "";
-			if (p != null) {
+			if (p != null && p.getTemplate() != null) {
 				templatePath = p.getTemplate().getPath();
 			} else {
-				// not a page
+				// not a page or no template specified
 			}
 
 			// If there is no service defined for this mime type yet, we

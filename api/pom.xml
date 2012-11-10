@@ -7,70 +7,20 @@
 	<parent>
 		<groupId>de.joerghoh.cq5.healthcheck</groupId>
 		<artifactId>parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../parent/pom.xml</relativePath>
+		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>jmx-extension</artifactId>
-	<name>CQ5 - Health Check - JMX Extensions</name>
+	<artifactId>api</artifactId>
 	<packaging>bundle</packaging>
 
+	<name>CQ5 - Health Check - API</name>
+
 	<dependencies>
-		<dependency>
-			<groupId>com.day.cq.wcm</groupId>
-			<artifactId>cq-wcm-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.day.cq</groupId>
-			<artifactId>cq-commons</artifactId>
-		</dependency>
-
-		<!-- add additional dependencies here -->
-
-		<dependency>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>org.apache.felix.scr.annotations</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>org.osgi.service.obr</artifactId>
-		</dependency>
-		<dependency>
+        <dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.compendium</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.jcr</groupId>
-			<artifactId>jcr</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.sling</groupId>
-			<artifactId>org.apache.sling.commons.osgi</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.sling</groupId>
-			<artifactId>org.apache.sling.commons.json</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.sling</groupId>
-			<artifactId>org.apache.sling.api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.day.cqse</groupId>
-			<artifactId>cqse-httpservice</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.granite</groupId>
-			<artifactId>com.adobe.granite.jcrclustersupport</artifactId>
-		</dependency>
+		</dependency>		
 	</dependencies>
 
 	<build>
@@ -90,9 +40,9 @@
 						<Include-Resource>
 							{maven-resources}
 						</Include-Resource>
-						<Private-Package>
-						    de.joerghoh.cq5.jmx*
-					    </Private-Package>
+						<Export-Package>
+						    de.joerghoh.cq5.healthcheck*
+						</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>
