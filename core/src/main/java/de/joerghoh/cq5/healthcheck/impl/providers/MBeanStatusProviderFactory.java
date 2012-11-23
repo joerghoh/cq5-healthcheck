@@ -317,6 +317,6 @@ public class MBeanStatusProviderFactory implements EventHandler {
 			registeredServices.remove(path);
 		}
 	}
+	
+	
 }
-
-
