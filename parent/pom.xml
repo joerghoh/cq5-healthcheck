@@ -132,6 +132,22 @@
 						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>
+				<!--This plugin's configuration is used to set the correct Eclipse project encoding settings. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-eclipse-plugin</artifactId>
+					<version>2.6</version>
+					<configuration>
+					  <additionalConfig>
+						<file>
+						  <name>.settings/org.eclipse.core.resources.prefs</name>
+						  <content>
+							<![CDATA[eclipse.preferences.version=1${line.separator}encoding/<project>=${project.build.sourceEncoding}${line.separator}]]>
+						  </content>
+						</file>
+					  </additionalConfig>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
