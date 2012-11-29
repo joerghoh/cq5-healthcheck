@@ -50,9 +50,7 @@ import de.joerghoh.cq5.healthcheck.SystemHealthStatus;
 public class HealthStatusServiceImpl implements HealthStatusService {
 
 	private List<HealthStatusProvider> providers = new ArrayList<HealthStatusProvider>();
-	private final Logger log = LoggerFactory
-			.getLogger(HealthStatusServiceImpl.class);
-
+	
 	private static int DEFAULT_NUMBER_BUNDLES = 10;
 
 	@Property
