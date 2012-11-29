@@ -33,8 +33,6 @@ import org.apache.felix.scr.annotations.ReferencePolicy;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.osgi.service.component.ComponentContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.joerghoh.cq5.healthcheck.HealthStatus;
 import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
