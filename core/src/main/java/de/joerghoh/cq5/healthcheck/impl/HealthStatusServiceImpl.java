@@ -33,8 +33,6 @@ import org.apache.felix.scr.annotations.ReferencePolicy;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.osgi.service.component.ComponentContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.joerghoh.cq5.healthcheck.HealthStatus;
 import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
@@ -50,9 +48,7 @@ import de.joerghoh.cq5.healthcheck.SystemHealthStatus;
 public class HealthStatusServiceImpl implements HealthStatusService {
 
 	private List<HealthStatusProvider> providers = new ArrayList<HealthStatusProvider>();
-	private final Logger log = LoggerFactory
-			.getLogger(HealthStatusServiceImpl.class);
-
+	
 	private static int DEFAULT_NUMBER_BUNDLES = 10;
 
 	@Property
@@ -82,7 +78,6 @@ public class HealthStatusServiceImpl implements HealthStatusService {
 			message = "Only " + results.size() + " out of "
 					+ bundleNumberThreshold + " monitoring services available";
 		}
-		log.info("Processed " + results.size() + " providers");
 		return new SystemHealthStatus(finalStatus, results, message);
 	}
 

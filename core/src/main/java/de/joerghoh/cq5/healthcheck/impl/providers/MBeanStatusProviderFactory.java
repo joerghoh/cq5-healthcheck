@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2012 Jörg Hoh, Alexander Saar, Markus Haack
  * 
@@ -123,7 +124,7 @@ public class MBeanStatusProviderFactory implements EventHandler {
 
 		if (event.getTopic().startsWith("org/osgi/framework/BundleEvent/")) {
 			try {
-				log.info("Validating config");
+				log.debug("Validating config");
 				validateRunningServices();
 				loadConfig();
 			} catch (Exception e) {
@@ -231,8 +232,6 @@ public class MBeanStatusProviderFactory implements EventHandler {
 			String mbeanName = mbean.toString();
 			if (mbeanExists(mbean)) {
 
-				log.info("Instantiate healtcheck for MBean " + mbeanName);
-
 				MBeanStatusProvider msp = new MBeanStatusProvider(mbean, props);
 				Dictionary<String, String> params = new Hashtable<String, String>();
 				// params.put(Constants.SERVICE_PID, pid );
@@ -318,4 +317,6 @@ public class MBeanStatusProviderFactory implements EventHandler {
 			registeredServices.remove(path);
 		}
 	}
+	
+	
 }
