@@ -13,13 +13,31 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package de.joerghoh.cq5.jmx.requests;
+package de.joerghoh.cq5.healthcheck;
 
-public interface RequestInformationMBean {
+/**
+ * Status value definitions are taken from
+ * http://nagiosplug.sourceforge.net/developer-guidelines.html#AEN76 and are the
+ * values which are defined by the popular Nagios monitoring system for the
+ * communication with its plugins.
+ */
+public enum StatusCode {
+	OK("OK"),
 
-	public String getMimeType();
+	WARN("WARN"),
 
-	public long getRequestCounter();
+	CRITICAL("CRITICAL"),
 
-	public long getTotalRequestDuration();
+	UNKNOWN("ARCHIVE");
+
+	private String msg;
+
+	StatusCode(String msg) {
+		this.msg = msg;
+	}
+
+	@Override
+	public String toString() {
+		return msg;
+	}
 }

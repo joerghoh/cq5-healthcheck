@@ -1,22 +1,17 @@
 /*
  * Copyright 2012 Jörg Hoh, Alexander Saar, Markus Haack
  * 
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package de.joerghoh.cq5.healthcheck.impl.providers;
 
@@ -46,13 +41,17 @@ import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.joerghoh.cq5.healthcheck.HealthStatus;
-import de.joerghoh.cq5.healthcheck.HealthStatusProvider;
+import de.joerghoh.cq5.healthcheck.Status;
+import de.joerghoh.cq5.healthcheck.StatusCode;
+import de.joerghoh.cq5.healthcheck.StatusProvider;
+
 
 @Service
 @Component(label = "MBean Status Provider Factory", metatype = true, 
 	configurationFactory = true, policy = ConfigurationPolicy.REQUIRE)
-public class MBeanStatusProvider implements HealthStatusProvider {
+
+public class MBeanStatusProvider implements StatusProvider {
+
 
 	private static final Logger log = LoggerFactory.getLogger(MBeanStatusProvider.class);
 
@@ -72,9 +71,9 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 	/**
 	 * @see de.joerghoh.cq5.healthcheck.HealthStatusProvider#getHealthStatus()
 	 */
-	public HealthStatus getHealthStatus() {
-		int status = getStatus();
-		return new HealthStatus(status, statusMessage, mbean.toString());
+	public Status getStatus() {
+		StatusCode status = calculateStatus();
+		return new Status(status, statusMessage, mbean.toString());
 	}
 
 	@Activate
@@ -100,8 +99,10 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 	 * 
 	 * @return the overall status
 	 */
-	private int getStatus() {
-		int accumulatedStatus = OK;
+
+	private StatusCode calculateStatus() {
+		StatusCode accumulatedStatus = StatusCode.OK;
+
 		statusMessage = "";
 		
 		for (String property : properties) {
@@ -121,12 +122,14 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 			final String comparisonAttributeName = new StringBuffer(split[3]).reverse().toString();
 			
 			// what would be the statusCode if we have a match?
+
 			final String comparisonLevel = new StringBuffer(split[2]).reverse().toString();
-			int statusCode = OK;
+			StatusCode statusCode = StatusCode.OK;
+
 			if (comparisonLevel.equals("warn")) {
-				statusCode = WARN;
+				statusCode = StatusCode.WARN;
 			} else if (comparisonLevel.equals("critical")) {
-				statusCode = CRITICAL;
+				statusCode = StatusCode.CRITICAL;
 			} else {
 				log.warn("Ignoring property (invalid level): " + property);
 				continue;
@@ -164,7 +167,7 @@ public class MBeanStatusProvider implements HealthStatusProvider {
 			}
 
 			// if we have a match, update the overall status
-			if (match && statusCode > accumulatedStatus) {
+			if (match && statusCode.compareTo(accumulatedStatus) > 0) {
 				accumulatedStatus = statusCode;
 			}
 		}
