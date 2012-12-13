@@ -23,9 +23,9 @@
 <%@include file="/libs/foundation/global.jsp"%>
 <%-- CQ5 health check component. --%>
 <%
-    HealthStatusService status = sling.getService(HealthStatusService.class);
-    SystemHealthStatus systemHealthStatus = status.getOverallStatus();
-    pageContext.setAttribute("systemHealthStatus", systemHealthStatus);
+    StatusService status = sling.getService(StatusService.class);
+    Status systemStatus = status.getStatus();
+    pageContext.setAttribute("systemStatus", systemStatus);
 %>
 <!DOCTYPE html>
 <html>
@@ -48,9 +48,9 @@
 </head>
 <body>
     <h1>Overview</h1>
-    <p><b>Overall Status:</b> ${systemHealthStatus.status}</p>
-    <c:if test="${not empty systemHealthStatus.monitoringMessage}">
-    <p><b>Caution:</b> ${systemHealthStatus.monitoringMessage}</p>
+    <p><b>Overall Status:</b> ${systemStatus.status}</p>
+    <c:if test="${not empty systemStatus.message}">
+    <p><b>Caution:</b> ${systemStatus.message}</p>
     </c:if>
     
     <h1>Details</h1>
@@ -60,7 +60,7 @@
             <th>Message</th>
             <th>Status</th>
         </tr>        
-        <c:forEach var="status" items="${systemHealthStatus.details}">
+        <c:forEach var="status" items="${systemStatus.details}">
         <tr>
             <td>${status.provider}</td>
             <td>${status.message}&nbsp;</td>

@@ -16,11 +16,28 @@
 package de.joerghoh.cq5.healthcheck;
 
 /**
- * Queries all registered HealthStatusProvider services and consolidates the
- * various results into a single result.
- * 
- * @author joerg
+ * Status value definitions are taken from
+ * http://nagiosplug.sourceforge.net/developer-guidelines.html#AEN76 and are the
+ * values which are defined by the popular Nagios monitoring system for the
+ * communication with its plugins.
  */
-public interface HealthStatusService {
-	public SystemHealthStatus getOverallStatus();
+public enum StatusCode {
+	OK("OK"),
+
+	WARN("WARN"),
+
+	CRITICAL("CRITICAL"),
+
+	UNKNOWN("ARCHIVE");
+
+	private String msg;
+
+	StatusCode(String msg) {
+		this.msg = msg;
+	}
+
+	@Override
+	public String toString() {
+		return msg;
+	}
 }
