@@ -65,6 +65,11 @@ public class MBeanStatusProvider implements StatusProvider {
 	private static String MBEAN_PROPERTY = "mbean.property";
 	private String[] properties;
 	
+	@Property
+	private static String MBEAN_PROVIDER_HINT = "mbean.providerHint";
+	private String providerHint;
+	private String providerName;
+	
 	private ObjectName mbean;
 	private String statusMessage = "";
 
@@ -73,7 +78,7 @@ public class MBeanStatusProvider implements StatusProvider {
 	 */
 	public Status getStatus() {
 		StatusCode status = calculateStatus();
-		return new Status(status, statusMessage, mbean.toString());
+		return new Status(status, statusMessage, providerName);
 	}
 
 	@Activate
@@ -82,10 +87,16 @@ public class MBeanStatusProvider implements StatusProvider {
 		Dictionary<?,?> props = ctx.getProperties();
 		mbeanName = PropertiesUtil.toString(props.get(MBEAN_NAME), null);
 		properties = PropertiesUtil.toStringArray(props.get(MBEAN_PROPERTY));
+		providerHint = PropertiesUtil.toString(props.get(MBEAN_PROVIDER_HINT), null);
+
 
 		mbean = buildObjectName(mbeanName);
 		if (mbean != null && mbeanExists(mbean)) {
 			log.info("Instantiate healtcheck for MBean " + mbeanName);
+		}
+		providerName = mbean.toString();
+		if (providerHint != null) {
+			providerName += " (" + providerHint + ")";
 		}
 	}
 
