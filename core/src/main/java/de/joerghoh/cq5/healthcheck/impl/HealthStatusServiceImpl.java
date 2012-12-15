@@ -71,8 +71,9 @@ public class HealthStatusServiceImpl implements StatusService {
 		// if not all requested services are available, go critical!
 		if (results.size() < bundleNumberThreshold) {
 			finalStatus = StatusCode.CRITICAL;
-			message = "Only " + results.size() + " out of "
+			message = "Only " + results.size() + " out of configured "
 					+ bundleNumberThreshold + " monitoring services available";
+			log.warn (message);
 		}
 		log.info("Processed " + results.size() + " providers");
 		return new Status(finalStatus, message, results);
