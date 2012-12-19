@@ -92,7 +92,9 @@ public class MBeanStatusProvider implements StatusProvider {
 
 		mbean = buildObjectName(mbeanName);
 		if (mbean != null && mbeanExists(mbean)) {
-			log.info("Instantiate healtcheck for MBean " + mbeanName);
+			log.info("Instantiate healtcheck for MBean {}",mbeanName);
+		} else {
+			log.warn ("Cannot instantiate healthcheck for MBean {}", mbeanName);
 		}
 		providerName = mbean.toString();
 		if (providerHint != null) {
@@ -137,9 +139,9 @@ public class MBeanStatusProvider implements StatusProvider {
 			final String comparisonLevel = new StringBuffer(split[2]).reverse().toString();
 			StatusCode statusCode = StatusCode.OK;
 
-			if (comparisonLevel.equals("warn")) {
+			if (comparisonLevel.equalsIgnoreCase("warn")) {
 				statusCode = StatusCode.WARN;
-			} else if (comparisonLevel.equals("critical")) {
+			} else if (comparisonLevel.equalsIgnoreCase("critical")) {
 				statusCode = StatusCode.CRITICAL;
 			} else {
 				log.warn("Ignoring property (invalid level): " + property);
@@ -150,13 +152,14 @@ public class MBeanStatusProvider implements StatusProvider {
 
 			// retrieve the long value for comparison
 			final String comparisonValue = new StringBuffer(split[0]).reverse().toString();
-			log.debug("comparsion {} for {}", property, comparisonValue);
+			log.debug("compare {} and {}", property, comparisonValue);
 
 			// read the correct value via JMX
 			Object jmxValueObj = getAttributeValue(comparisonAttributeName);
 			if (jmxValueObj == null) {
-				log.info("Ignoring property " + property + "(no such a JMX attribute " + comparisonAttributeName + ")");
-				continue;
+				log.warn("Ignoring property " + property + " (no such a JMX attribute " + comparisonAttributeName + ")");
+				statusMessage ="Cannot resolve property or MBean";
+				return StatusCode.WARN;
 			}
 			log.debug("jmx value = {}", jmxValueObj);
 
@@ -194,15 +197,9 @@ public class MBeanStatusProvider implements StatusProvider {
 	private Object getAttributeValue(String attributeName) {
 		try {
 			return server.getAttribute(mbean, attributeName);
-		} catch (AttributeNotFoundException e) {
-			e.printStackTrace();
-		} catch (InstanceNotFoundException e) {
-			e.printStackTrace();
-		} catch (MBeanException e) {
-			e.printStackTrace();
-		} catch (ReflectionException e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {
+			log.warn("Cannot read attribute "+attributeName+" from MBean "+mbean);
+		} 
 		return null;
 	}
 
@@ -223,6 +220,8 @@ public class MBeanStatusProvider implements StatusProvider {
 				match = (jmxLongValue > comparisonLongValue);
 			} else if (comparisonOperation.equals("==")) {
 				match = (jmxLongValue == comparisonLongValue);
+			} else if (comparisonOperation.equals("!=")) {
+				match = (jmxLongValue != comparisonLongValue);
 			} else if (comparisonOperation.equals("<")) {
 				match = (jmxLongValue < comparisonLongValue);
 			} else {
