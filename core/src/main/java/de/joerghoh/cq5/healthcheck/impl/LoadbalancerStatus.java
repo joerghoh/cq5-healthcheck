@@ -51,7 +51,7 @@ import de.joerghoh.cq5.healthcheck.StatusCode;
  * 
  * @author joerg
  */
-@Component(immediate = true, metatype = true)
+@Component(immediate = true, metatype = true, label="Loadbalancer director service", description="Service managing the loadbalancer based on the healtchechk data ")
 @Service(value = javax.servlet.Servlet.class)
 @Properties({
 		@Property(name = "sling.servlet.methods", value = "GET"),

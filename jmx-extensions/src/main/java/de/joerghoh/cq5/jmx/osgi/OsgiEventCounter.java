@@ -27,13 +27,19 @@ import org.osgi.service.event.EventHandler;
 @Component(
 		immediate=true,
 		metatype=true,
-		description="Exposes details on the number of OSGI events",
+		label="OSGI Event Counter MBean",
+		description="Exposes details on the number of OSGI events via JMX",
 		name="de.joerghoh.cq5.jmx.osgi.OsgiEventCounter"
 		)
 @Service (value={OsgiEventCounterMBean.class,EventHandler.class})
 @Properties({
-	@Property (name="jmx.objectname",value="de.joerghoh.cq5.jmx.osgi:id=OsgiEventCounter"),
-	@Property (name="event.topics", value={"org/apache/sling/*","com/day/*","org/osgi/framework/*"})
+	@Property (name="jmx.objectname",value="de.joerghoh.cq5.jmx.osgi:id=OsgiEventCounter", 
+				label="Name of the MBean",
+				description=""
+				),
+	@Property (name="event.topics", value={"org/apache/sling/*","com/day/*","org/osgi/framework/*"}, 
+				label="Event topics", 
+				description="The event topics which should be counted (wildcards allowed)")
 })
 public class OsgiEventCounter implements OsgiEventCounterMBean, EventHandler {
 
