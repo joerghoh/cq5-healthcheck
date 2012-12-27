@@ -77,8 +77,14 @@ public class MBeanStatusProvider implements StatusProvider {
 	 * @see de.joerghoh.cq5.healthcheck.HealthStatusProvider#getHealthStatus()
 	 */
 	public Status getStatus() {
-		StatusCode status = calculateStatus();
-		return new Status(status, statusMessage, providerName);
+		mbean = buildObjectName(mbeanName);
+		if (mbean != null && mbeanExists(mbean)) {
+			StatusCode status = calculateStatus();
+			return new Status(status, statusMessage, providerName);
+		} else {
+			log.info("Cannot resolve mbean " + mbeanName);
+			return new Status(StatusCode.UNKNOWN,"cannot find mbean", providerName);
+		}
 	}
 
 	@Activate
@@ -94,7 +100,7 @@ public class MBeanStatusProvider implements StatusProvider {
 		if (mbean != null && mbeanExists(mbean)) {
 			log.info("Instantiate healtcheck for MBean " + mbeanName);
 		}
-		providerName = mbean.toString();
+		providerName = mbeanName;
 		if (providerHint != null) {
 			providerName += " (" + providerHint + ")";
 		}
@@ -155,8 +161,10 @@ public class MBeanStatusProvider implements StatusProvider {
 			// read the correct value via JMX
 			Object jmxValueObj = getAttributeValue(comparisonAttributeName);
 			if (jmxValueObj == null) {
-				log.info("Ignoring property " + property + "(no such a JMX attribute " + comparisonAttributeName + ")");
-				continue;
+
+				log.warn("Ignoring property " + property + " (no such JMX attribute " + comparisonAttributeName + ")");
+				statusMessage ="Cannot resolve property or MBean";
+				return StatusCode.WARN;
 			}
 			log.debug("jmx value = {}", jmxValueObj);
 
@@ -208,6 +216,11 @@ public class MBeanStatusProvider implements StatusProvider {
 
 	/**
 	 * compare helper method to compare the different types of attribute values
+	 * supported types:
+	 * ** long
+	 * ** integer
+	 * ** boolean
+	 * ** string
 	 * 
 	 * @param comparisonOperation
 	 * @param comparisonValue
@@ -215,7 +228,11 @@ public class MBeanStatusProvider implements StatusProvider {
 	 * @return
 	 */
 	private boolean compareAttributeValue(final String comparisonOperation, final String comparisonValue, Object jmxValueObj) {
+		
 		boolean match = false;
+		
+		
+		
 		if (jmxValueObj instanceof Long) { // first check for plain value
 			final long jmxLongValue = Long.parseLong(jmxValueObj.toString());
 			final long comparisonLongValue = NumberUtils.createLong(comparisonValue);
@@ -229,6 +246,23 @@ public class MBeanStatusProvider implements StatusProvider {
 				log.warn("Can not compare long values {} and {}", jmxLongValue, comparisonLongValue);
 				throw new RuntimeException();
 			}
+			
+		} else if (jmxValueObj instanceof Integer) { 
+			final int jmxIntValue = Integer.parseInt(jmxValueObj.toString());
+			final int comparisonIntValue = NumberUtils.createInteger(comparisonValue);
+			if (comparisonOperation.equals(">")) {
+				match = (jmxIntValue > comparisonIntValue);
+			} else if (comparisonOperation.equals("==")) {
+				match = (jmxIntValue == comparisonIntValue);
+			} else if (comparisonOperation.equals("!=")) {
+				match = (jmxIntValue != comparisonIntValue);
+			} else if (comparisonOperation.equals("<")) {
+				match = (jmxIntValue < comparisonIntValue);
+			} else {
+				log.warn("Can not compare int values {} and {}", jmxIntValue, comparisonIntValue);
+				throw new RuntimeException();
+			}
+			
 		} else if (jmxValueObj instanceof long[]) { // second check for array
 			final long[] jmxLongArrayValue = (long[]) jmxValueObj;
 			final long comparisonLongValue = NumberUtils.createLong(comparisonValue);
@@ -244,6 +278,7 @@ public class MBeanStatusProvider implements StatusProvider {
 				throw new RuntimeException();
 			}
 		} else if (jmxValueObj instanceof String) { // third check for String values
+			log.info("type comparison: string");
 			final String jmxStringValue = jmxValueObj.toString();
 			if (comparisonOperation.equals("equals")) {
 				match = (comparisonValue.equals(jmxStringValue));
@@ -268,6 +303,7 @@ public class MBeanStatusProvider implements StatusProvider {
 			}
 		} else {
 			log.warn("Can not compare jmx attribute value {} with {}", jmxValueObj, comparisonValue);
+			log.warn("jmxValueObj type = " + jmxValueObj.getClass().getName());
 			throw new RuntimeException();
 		}
 		return match;

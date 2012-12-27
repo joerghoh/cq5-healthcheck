@@ -28,7 +28,7 @@ public enum StatusCode {
 
 	CRITICAL("CRITICAL"),
 
-	UNKNOWN("ARCHIVE");
+	UNKNOWN("UNKNOWN");
 
 	private String msg;
 
