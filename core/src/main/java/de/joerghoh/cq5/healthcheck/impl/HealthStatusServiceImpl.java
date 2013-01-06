@@ -36,7 +36,7 @@ import de.joerghoh.cq5.healthcheck.StatusCode;
 import de.joerghoh.cq5.healthcheck.StatusProvider;
 import de.joerghoh.cq5.healthcheck.StatusService;
 
-@Component(metatype = true, immediate = true)
+@Component(metatype = true, immediate = true, label="HealthCheck Service", description="Core of the healthcheck, computes the overall result")
 @Service(value = StatusService.class)
 @Reference(name = "healthStatusProvider", referenceInterface = StatusProvider.class, cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, policy = ReferencePolicy.DYNAMIC)
 public class HealthStatusServiceImpl implements StatusService {
@@ -47,7 +47,7 @@ public class HealthStatusServiceImpl implements StatusService {
 
 	private static int DEFAULT_NUMBER_BUNDLES = 10;
 
-	@Property
+	@Property(value="10",label="Number of healthcheck providers", description="If the number of active healthchecks is not identical to this number you'll get warnings")
 	private static String BUNDLE_NUMBER_THRESHOLD_PROP = "bundle.threshold";
 	private int bundleNumberThreshold;
 
@@ -71,8 +71,9 @@ public class HealthStatusServiceImpl implements StatusService {
 		// if not all requested services are available, go critical!
 		if (results.size() < bundleNumberThreshold) {
 			finalStatus = StatusCode.CRITICAL;
-			message = "Only " + results.size() + " out of "
+			message = "Only " + results.size() + " out of configured "
 					+ bundleNumberThreshold + " monitoring services available";
+			log.warn (message);
 		}
 		log.info("Processed " + results.size() + " providers");
 		return new Status(finalStatus, message, results);
