@@ -43,9 +43,6 @@ public class Status {
 	}
 
 	public String getStatusText() {
-		if (status == StatusCode.UNKNOWN) {
-			log.error("Invalid status: " + status);
-		}
 		return status.toString();
 	}
 

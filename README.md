@@ -5,6 +5,7 @@ This small project supports you when you need to monitor your CQ5 system. "Monit
 automatic process checks CQ5 every few seconds (or minutes) if it is still fully functional. By default
 CQ5 does not have an endpoint, which offers this information, so I created this project to provide them.
 
+This project is released under Apache License.
 
 Quick start
 ============
