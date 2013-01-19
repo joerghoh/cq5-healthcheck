@@ -47,7 +47,8 @@ import de.joerghoh.cq5.healthcheck.StatusCode;
  * eligable to return "OK", slaves always return "NoOK".
  * 
  * In any case also the OverallStatus of the HealthStatusService is used to
- * identify the status. If the status is != OK, then "notOK" is returned.
+ * identify the status. If the status is != OK, then "notOK" is returned and the
+ * return code of this request is set to 500 (internal server error).
  * 
  * @author joerg
  */
@@ -94,8 +95,11 @@ public class LoadbalancerStatus extends SlingSafeMethodsServlet implements
 
 			response.setContentType("text/html");
 			if (statusOK) {
+				response.setStatus(200);
 				response.getOutputStream().print(StatusCode.OK.toString());
 			} else {
+				// in case of problems return an errorcode
+				response.setStatus(500);
 				response.getOutputStream().print(StatusCode.WARN.toString());
 			}
 			response.getOutputStream().flush();
