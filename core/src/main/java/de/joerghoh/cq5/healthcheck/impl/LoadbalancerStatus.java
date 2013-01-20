@@ -27,6 +27,7 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.commons.osgi.PropertiesUtil;
+import org.apache.sling.jcr.api.SlingRepository;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +64,9 @@ public class LoadbalancerStatus extends SlingSafeMethodsServlet implements
 	@Reference
 	private StatusService statusService;
 
+	@Reference
+	private SlingRepository repository;
+	
 	private static final String DEFAULT_LB_STRATEGY = "ActivePassive";
 	@Property(value = DEFAULT_LB_STRATEGY, name = "Clustering strategy", description = "Specify your clustering strategy to instruct the loadbalancer. "
 			+ "Currently 'ActivePassive' and 'ActiveActive' are supported.")
@@ -73,6 +77,7 @@ public class LoadbalancerStatus extends SlingSafeMethodsServlet implements
 	private Logger log = LoggerFactory.getLogger(LoadbalancerStatus.class);
 
 	private static final long serialVersionUID = -8012558085365805331L;
+	
 
 	@Override
 	public void doGet(SlingHttpServletRequest request,
@@ -80,19 +85,19 @@ public class LoadbalancerStatus extends SlingSafeMethodsServlet implements
 
 		try {
 			StatusCode status = statusService.getStatus().getStatus();
-			boolean allOK = status == StatusCode.OK;
+			boolean allServicesOK = ( status == StatusCode.OK );
 			boolean statusOK = false;
 
 			if (loadbalancerStrategy.equals("ActivePassive")) {
-				statusOK = iAmMaster & allOK;
+				statusOK = iAmMaster && allServicesOK;
 			} else if (loadbalancerStrategy.equals("ActiveActive")) {
-				statusOK = allOK;
+				statusOK = allServicesOK;
 			} else {
 				statusOK = false;
 				log.error("Invalid loadbalancer strategy set: "
 						+ loadbalancerStrategy);
 			}
-
+			
 			response.setContentType("text/html");
 			if (statusOK) {
 				response.setStatus(200);
@@ -108,7 +113,12 @@ public class LoadbalancerStatus extends SlingSafeMethodsServlet implements
 		}
 	}
 
-	/** ClusterAware impl **/
+	/** ClusterAware impl 
+	 * 
+	 * be cautious: this approach detects only changes to the cluster state,
+	 * but the initial status must be detected via another mechanism.
+	 * 
+	 * **/
 
 	public void bindRepository(String repositoryId, String clusterId,
 			boolean isMaster) {
@@ -127,5 +137,7 @@ public class LoadbalancerStatus extends SlingSafeMethodsServlet implements
 				ctx.getProperties().get(PROPERTY_LB_STRATEGY),
 				DEFAULT_LB_STRATEGY);
 		log.info("Using loadbalancer strategy " + loadbalancerStrategy);
+		String v = repository.getDescriptor("crx.cluster.master");
+		iAmMaster = (v == null || Boolean.parseBoolean(v));
 	}
 }
