@@ -26,7 +26,7 @@
 	<groupId>de.joerghoh.cq5</groupId>
 	<artifactId>reactor</artifactId>
 	<packaging>pom</packaging>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 
 	<name>CQ5 - Health Check - Reactor</name>
 
