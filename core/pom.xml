@@ -28,7 +28,7 @@
 		<groupId>de.joerghoh.cq5.healthcheck</groupId>
 		<artifactId>parent</artifactId>
 		<relativePath>../parent/pom.xml</relativePath>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</parent>
 
 	<artifactId>core</artifactId>
