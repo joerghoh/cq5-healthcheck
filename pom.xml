@@ -75,4 +75,13 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
+	<scm>
+		<connection>scm:git:git@github.com:joerghoh/cq-healthcheck.git</connection>
+		<developerConnection>scm:git:[push=]ssh://github.com/path_to_repository[fetch]git@github.com:joerghoh/cq-healthcheck.git</developerConnection>
+		<url>scm:git:git@github.com:joerghoh/cq-healthcheck.git</url>
+	</scm>
+	<organization>
+		<name>Jörg Hoh</name>
+		<url>http://www.github.com/joerghoh/cq5-healthcheck/wiki</url>
+	</organization>
 </project>
