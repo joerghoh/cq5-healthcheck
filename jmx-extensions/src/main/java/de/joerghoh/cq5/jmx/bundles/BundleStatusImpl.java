@@ -26,7 +26,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 
-@Component(immediate = true, metatype = true, description = "Exports some bundle status to JMX", name = "JMX bundle status provider")
+@Component(immediate = true, metatype = false, description = "Exports some bundle status to JMX", name = "JMX bundle status provider")
 @Service(value = BundleStatusMBean.class)
 @Properties({ @Property(name = "jmx.objectname", value = "de.joerghoh.cq5.jmx:id=bundles") })
 public class BundleStatusImpl implements BundleStatusMBean {

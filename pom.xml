@@ -77,7 +77,7 @@
 	</pluginRepositories>
 	<scm>
 		<connection>scm:git:git@github.com:joerghoh/cq-healthcheck.git</connection>
-		<developerConnection>scm:git:[push=]ssh://github.com/path_to_repository[fetch]git@github.com:joerghoh/cq-healthcheck.git</developerConnection>
+		<developerConnection>scm:git:[push=]ssh://github.com/joerghoh/cq5-healthcheck.git[fetch]git@github.com:joerghoh/cq-healthcheck.git</developerConnection>
 		<url>scm:git:git@github.com:joerghoh/cq-healthcheck.git</url>
 	</scm>
 	<organization>
