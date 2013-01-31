@@ -56,8 +56,9 @@ import de.joerghoh.cq5.healthcheck.StatusCode;
 @Component(immediate = true, metatype = true, label="Loadbalancer director service", description="Service managing the loadbalancer based on the healtchechk data ")
 @Service(value = javax.servlet.Servlet.class)
 @Properties({
-		@Property(name = "sling.servlet.methods", value = "GET"),
-		@Property(name = "sling.servlet.paths", value = { "/bin/loadbalancer" }) })
+		@Property(name = "sling.servlet.methods", value = "GET", propertyPrivate=true),
+		@Property(name = "sling.servlet.paths", value = { "/bin/loadbalancer" }, propertyPrivate=true) 
+})
 public class LoadbalancerStatus extends SlingSafeMethodsServlet implements
 		ClusterAware {
 
@@ -68,7 +69,7 @@ public class LoadbalancerStatus extends SlingSafeMethodsServlet implements
 	private SlingRepository repository;
 	
 	private static final String DEFAULT_LB_STRATEGY = "ActivePassive";
-	@Property(value = DEFAULT_LB_STRATEGY, name = "Clustering strategy", description = "Specify your clustering strategy to instruct the loadbalancer. "
+	@Property(value = DEFAULT_LB_STRATEGY, description = "Specify your clustering strategy to instruct the loadbalancer. "
 			+ "Currently 'ActivePassive' and 'ActiveActive' are supported.")
 	private static final String PROPERTY_LB_STRATEGY = "strategy";
 

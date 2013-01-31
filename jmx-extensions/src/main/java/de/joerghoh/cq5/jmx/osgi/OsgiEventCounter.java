@@ -35,7 +35,8 @@ import org.osgi.service.event.EventHandler;
 @Properties({
 	@Property (name="jmx.objectname",value="de.joerghoh.cq5.jmx.osgi:id=OsgiEventCounter", 
 				label="Name of the MBean",
-				description=""
+				description="",
+				propertyPrivate=true
 				),
 	@Property (name="event.topics", value={"org/apache/sling/*","com/day/*","org/osgi/framework/*"}, 
 				label="Event topics", 
