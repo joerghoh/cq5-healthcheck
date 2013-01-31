@@ -131,6 +131,11 @@
                                 </goals>
                             </execution>
                         </executions>
+			<configuration>
+			  <userId>${depl.user}</userId>
+			  <password>${depl.password}</password>
+			  <targetURL>http://${depl.host}:${depl.port}/crx/packmgr/service.jsp</targetURL>
+			</configuration>
                     </plugin>
                 </plugins>
             </build>
