@@ -43,12 +43,12 @@ import de.joerghoh.cq5.healthcheck.StatusCode;
  * Internally the HealthStatusService and the current clustering status is used
  * to determine the return code.
  * 
- * This code allows to specify a cluster strategy: * ActiveActive: All cluster
- * nodes are eligable to return "OK" * ActivePassive: Only the master is
- * eligable to return "OK", slaves always return "NoOK".
+ * This code allows to specify a cluster strategy: 
+ * * ActiveActive: All cluster nodes are eligable to return "OK" 
+ * * ActivePassive: Only the master is eligable to return "OK", slaves always return "WARN".
  * 
  * In any case also the OverallStatus of the HealthStatusService is used to
- * identify the status. If the status is != OK, then "notOK" is returned and the
+ * identify the status. If the status is != OK, then "WARN" is returned and the
  * return code of this request is set to 500 (internal server error).
  * 
  * @author joerg
