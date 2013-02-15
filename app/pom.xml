@@ -1,24 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--
-  Copyright 2012 Jörg Hoh, Alexander Saar, Markus Haack
-  
-  Licensed to the Apache Software Foundation (ASF) under one
-  or more contributor license agreements.  See the NOTICE file
-  distributed with this work for additional information
-  regarding copyright ownership.  The ASF licenses this file
-  to you under the Apache License, Version 2.0 (the
-  "License"); you may not use this file except in compliance
-  with the License.  You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing,
-  software distributed under the License is distributed on an
-  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-  KIND, either express or implied.  See the License for the
-  specific language governing permissions and limitations
-  under the License.
--->
+<!-- Copyright 2012 Jörg Hoh, Alexander Saar, Markus Haack Licensed to the 
+	Apache Software Foundation (ASF) under one or more contributor license agreements. 
+	See the NOTICE file distributed with this work for additional information 
+	regarding copyright ownership. The ASF licenses this file to you under the 
+	Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+	Unless required by applicable law or agreed to in writing, software distributed 
+	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+	the specific language governing permissions and limitations under the License. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -53,9 +43,13 @@
 			<artifactId>jmx-extension</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-        
+
 
 		<!-- add additional dependencies -->
+		<dependency>
+			<groupId>org.apache.aries.jmx</groupId>
+			<artifactId>org.apache.aries.jmx.whiteboard</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -86,11 +80,12 @@
 				<artifactId>content-package-maven-plugin</artifactId>
 				<extensions>true</extensions>
 				<configuration>
-				    <name>cq5-healthcheck</name>
-				    <description>${project.description}</description>
-				    <group>Healthcheck</group>
-				    <finalName>cq5-healthcheck-${project.version}</finalName>
-				    <embeddeds>
+					<name>cq5-healthcheck</name>
+					<description>${project.description}</description>
+					<group>Healthcheck</group>
+					<finalName>cq5-healthcheck-${project.version}</finalName>
+					<failOnMissingEmbed>true</failOnMissingEmbed>
+					<embeddeds>
 						<embedded>
 							<groupId>de.joerghoh.cq5.healthcheck</groupId>
 							<artifactId>api</artifactId>
@@ -106,34 +101,39 @@
 							<artifactId>jmx-extension</artifactId>
 							<target>/apps/healthcheck/install</target>
 						</embedded>
+						<embedded>
+							<groupId>org.apache.aries.jmx</groupId>
+							<artifactId>org.apache.aries.jmx.whiteboard</artifactId>
+							<target>/apps/healthcheck/install</target>
+						</embedded>
 					</embeddeds>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<profiles>
-        <profile>
-            <id>installPackages</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.day.jcr.vault</groupId>
-                        <artifactId>maven-vault-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>install-package</id>
-                                <goals>
-                                    <goal>install</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+		<profile>
+			<id>installPackages</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.day.jcr.vault</groupId>
+						<artifactId>maven-vault-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>install-package</id>
+								<goals>
+									<goal>install</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

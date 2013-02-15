@@ -27,7 +27,7 @@
 	<parent>
 		<groupId>de.joerghoh.cq5.healthcheck</groupId>
 		<artifactId>parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>1.0.0</version>
 		<relativePath>../parent/pom.xml</relativePath>
 	</parent>
 
@@ -84,8 +84,8 @@
 			<artifactId>org.apache.sling.api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.day.cqse</groupId>
-			<artifactId>cqse-httpservice</artifactId>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.adobe.granite</groupId>

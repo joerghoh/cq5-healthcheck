@@ -35,7 +35,7 @@
 		<depl.user>admin</depl.user>
 		<depl.password>admin</depl.password>
 		<depl.host>localhost</depl.host>
-		<depl.port>4502</depl.port>
+		<depl.port>8081</depl.port>
 	</properties>
 
 	<modules>
