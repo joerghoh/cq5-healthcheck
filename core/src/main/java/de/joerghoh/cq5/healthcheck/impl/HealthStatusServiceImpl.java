@@ -26,6 +26,7 @@ import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.ReferenceCardinality;
 import org.apache.felix.scr.annotations.ReferencePolicy;
 import org.apache.felix.scr.annotations.Service;
+import org.apache.sling.commons.osgi.OsgiUtil;
 import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
@@ -92,7 +93,7 @@ public class HealthStatusServiceImpl implements StatusService {
 	@Activate
 	protected void activate(ComponentContext context) {
 		Dictionary<?, ?> properties = context.getProperties();
-		bundleNumberThreshold = PropertiesUtil.toInteger(
+		bundleNumberThreshold = OsgiUtil.toInteger(
 				properties.get(BUNDLE_NUMBER_THRESHOLD_PROP),
 				DEFAULT_NUMBER_BUNDLES);
 	}

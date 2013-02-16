@@ -87,6 +87,11 @@
 					<failOnMissingEmbed>true</failOnMissingEmbed>
 					<embeddeds>
 						<embedded>
+							<groupId>org.apache.aries.jmx</groupId>
+							<artifactId>org.apache.aries.jmx.whiteboard</artifactId>
+							<target>/apps/healthcheck/install</target>
+						</embedded>
+						<embedded>
 							<groupId>de.joerghoh.cq5.healthcheck</groupId>
 							<artifactId>api</artifactId>
 							<target>/apps/healthcheck/install</target>
@@ -101,11 +106,7 @@
 							<artifactId>jmx-extension</artifactId>
 							<target>/apps/healthcheck/install</target>
 						</embedded>
-						<embedded>
-							<groupId>org.apache.aries.jmx</groupId>
-							<artifactId>org.apache.aries.jmx.whiteboard</artifactId>
-							<target>/apps/healthcheck/install</target>
-						</embedded>
+
 					</embeddeds>
 				</configuration>
 			</plugin>

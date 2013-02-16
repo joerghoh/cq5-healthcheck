@@ -97,7 +97,7 @@ public class RequestFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
 
-		RequestInformationImpl rii = null;
+		RequestInformation rii = null;
 
 		if (!shutdownInProgress) {
 			SlingHttpServletRequest req = (SlingHttpServletRequest) request;
@@ -122,8 +122,8 @@ public class RequestFilter implements Filter {
 
 			ServiceRegistration reg = services.get(designator);
 			Object o = bundleContext.getService(reg.getReference());
-			if (o instanceof RequestInformationImpl) {
-				rii = (RequestInformationImpl) o;
+			if (o instanceof RequestInformation) {
+				rii = (RequestInformation) o;
 			} else {
 				log.error("Something went wrong with the retrieval of the service object for meban "
 						+ designator);
@@ -165,7 +165,7 @@ public class RequestFilter implements Filter {
 	private ServiceRegistration registerReportingService(String mbeanName,
 			String mimeType) {
 
-		RequestInformationImpl rii = new RequestInformationImpl(mimeType);
+		RequestInformation rii = new RequestInformation(mimeType);
 		Dictionary<String, String> props = new Hashtable<String, String>();
 		props.put("jmx.objectname", mbeanName);
 

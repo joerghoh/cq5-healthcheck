@@ -26,6 +26,7 @@ import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
+import org.apache.sling.commons.osgi.OsgiUtil;
 import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.apache.sling.jcr.api.SlingRepository;
 import org.osgi.service.component.ComponentContext;
@@ -133,7 +134,7 @@ public class LoadbalancerStatus extends SlingSafeMethodsServlet implements
 
 	@Activate
 	public void Activate(ComponentContext ctx) {
-		loadbalancerStrategy = PropertiesUtil.toString(
+		loadbalancerStrategy = OsgiUtil.toString(
 				ctx.getProperties().get(PROPERTY_LB_STRATEGY),
 				DEFAULT_LB_STRATEGY);
 		log.info("Using loadbalancer strategy " + loadbalancerStrategy);

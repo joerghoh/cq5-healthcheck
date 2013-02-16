@@ -17,7 +17,7 @@ package de.joerghoh.cq5.jmx.requests;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-public class RequestInformationImpl implements RequestInformationMBean {
+public class RequestInformation implements RequestInformationMBean {
 
 	private AtomicLong counter = new AtomicLong(0);
 
@@ -41,7 +41,7 @@ public class RequestInformationImpl implements RequestInformationMBean {
 
 	// protected interface
 
-	protected RequestInformationImpl(String mimeType) {
+	protected RequestInformation(String mimeType) {
 		this.mimeType = mimeType;
 	}
 
