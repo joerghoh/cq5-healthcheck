@@ -162,7 +162,7 @@ public class RequestFilter implements Filter {
 
 	}
 
-	private ServiceRegistration registerReportingService(String mbeanName,
+	private synchronized ServiceRegistration registerReportingService(String mbeanName,
 			String mimeType) {
 
 		RequestInformation rii = new RequestInformation(mimeType);
