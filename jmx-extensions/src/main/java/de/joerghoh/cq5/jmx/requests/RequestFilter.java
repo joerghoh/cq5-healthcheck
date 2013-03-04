@@ -164,18 +164,24 @@ public class RequestFilter implements Filter {
 
 	private synchronized ServiceRegistration registerReportingService(String mbeanName,
 			String mimeType) {
+		
+		// we need to recheck, as in the meantime it could have been registered already
+		if (!services.containsKey(mbeanName)) {
 
-		RequestInformationImpl rii = new RequestInformationImpl(mimeType);
-		Dictionary<String, String> props = new Hashtable<String, String>();
-		props.put("jmx.objectname", mbeanName);
+			RequestInformationImpl rii = new RequestInformationImpl(mimeType);
+			Dictionary<String, String> props = new Hashtable<String, String>();
+			props.put("jmx.objectname", mbeanName);
 
-		log.debug("Registering mbean for " + mbeanName);
+			log.debug("Registering mbean for " + mbeanName);
 
-		ServiceRegistration reg = bundleContext.registerService(
-				RequestInformationMBean.class.getName(), rii, props);
-		services.put(mbeanName, reg);
+			ServiceRegistration reg = bundleContext.registerService(
+					RequestInformationMBean.class.getName(), rii, props);
+			services.put(mbeanName, reg);
 
-		return reg;
+			return reg;
+		} else {
+			return null;
+		}
 
 	}
 }
