@@ -20,6 +20,14 @@ package de.joerghoh.cq5.healthcheck;
  * http://nagiosplug.sourceforge.net/developer-guidelines.html#AEN76 and are the
  * values which are defined by the popular Nagios monitoring system for the
  * communication with its plugins.
+ * 
+ * OK -- everything is OK. This should be the standard status in normal operation.
+ * WARN -- system still fully functional, but there are issues, which should be 
+ * 		looked after.
+ * CRITICAL -- the system is no longer fully functional, it should be taken out
+ * 		of service; intervention of operation staff required.
+ * 
+ * 
  */
 public enum StatusCode {
 	OK("OK"),

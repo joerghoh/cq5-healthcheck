@@ -5,5 +5,10 @@ package de.joerghoh.cq5.healthcheck;
  * results into a single result.
  */
 public interface StatusService {
+	
+	/**
+	 * Returns the overall status.
+	 * @return system status
+	 */
 	public Status getStatus();
 }
