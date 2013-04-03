@@ -96,7 +96,7 @@
 
 	<build>
 		<plugins>
-			<plugin>
+		    <plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-scr-plugin</artifactId>
 			</plugin>
@@ -188,5 +188,27 @@
 				</plugins>
 			</build>
 		</profile>
-	</profiles>
+
+        <profile>
+            <id>release-generate-sources-javadoc</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
