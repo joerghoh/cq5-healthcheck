@@ -5,4 +5,5 @@
 		<exclude pattern="/apps/healthcheck/config*" />
 		<exclude pattern="/content" />
 	</filter>
+	<filter root="/content/statuspage"></filter>
 </workspaceFilter>
