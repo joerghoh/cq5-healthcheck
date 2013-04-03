@@ -35,6 +35,7 @@
 	<packaging>bundle</packaging>
 
 	<name>CQ5 - Health Check - Core</name>
+	<description>Core implementation of the Health Check project</description>
 
 	<dependencies>
 	    <dependency>

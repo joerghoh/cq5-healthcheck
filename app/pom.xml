@@ -35,7 +35,7 @@
 	<packaging>content-package</packaging>
 
 	<name>CQ5 - Health Check - Application Package</name>
-	<description>Contains all components of the Health Check application.</description>
+	<description>CQ5 application packages containing all components of the Health Check application.</description>
 
 	<dependencies>
 		<dependency>

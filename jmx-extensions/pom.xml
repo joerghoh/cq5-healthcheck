@@ -33,6 +33,7 @@
 
 	<artifactId>jmx-extension</artifactId>
 	<name>CQ5 - Health Check - JMX Extensions</name>
+	<description>Contains JMX extensions for the Health Check project</description>
 	<packaging>bundle</packaging>
 
 	<dependencies>
