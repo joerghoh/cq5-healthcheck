@@ -19,12 +19,46 @@
  * under the License.
  */
  --%>
-<%@page import="de.joerghoh.cq5.healthcheck.*,java.util.List" session="false"%>
+<%@page import="de.joerghoh.cq5.healthcheck.*,java.util.List,org.apache.sling.commons.json.JSONObject" session="false"%>
 <%@include file="/libs/foundation/global.jsp"%>
 <%-- CQ5 health check component. --%>
 <%
+
+	String[] serverConfig = properties.get("vipEnabled", String[].class);
+    
     StatusService status = sling.getService(StatusService.class);
     Status systemStatus = status.getStatus();
+    
+	if(serverConfig != null)
+    {
+    	for(String curJsonServerItem: serverConfig)
+    	{
+    		
+    		JSONObject curJsonObj = new JSONObject(curJsonServerItem);
+    		String serverText = curJsonObj.getString("serverText");
+    		StatusCode currentStatus = null;
+    		String reason = null;
+    		if(curJsonObj.getBoolean("enabledServer"))
+    		{
+    			currentStatus = StatusCode.OK;
+    		    reason = "Server Enabled";
+    		}else if(serverText.equalsIgnoreCase(request.getServerName()))
+    		{
+    		    List<Status> statusDetails = systemStatus.getDetails();
+    		    systemStatus = new Status(StatusCode.CRITICAL, "Server Disabled", statusDetails);
+    		   	currentStatus = StatusCode.CRITICAL;
+    		   	reason = "Server Disabled";
+    		}else
+    		{
+    		    currentStatus = StatusCode.CRITICAL;
+    		   	reason = "Server Disabled";
+    		}
+    		Status serverStatus = new Status(currentStatus, reason, serverText );
+    		systemStatus.getDetails().add(serverStatus);
+    	}
+    }
+         
+         
     pageContext.setAttribute("systemStatus", systemStatus);
 %>
 <!DOCTYPE html>
@@ -47,7 +81,7 @@
     </style>
 </head>
 <body>
-    <h1>Overview</h1>
+    <h1>Overview <%=request.getServerName() %></h1>
     <p><b>Overall Status:</b> ${systemStatus.status}</p>
     <c:if test="${not empty systemStatus.message}">
     <p><b>Caution:</b> ${systemStatus.message}</p>

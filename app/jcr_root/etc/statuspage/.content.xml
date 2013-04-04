@@ -4,7 +4,6 @@
     jcr:title="CQ5 healthcheck page"
     allowedPaths="[.*,]"
     ranking="{Long}100">
-    <jcr:content
-        jcr:primaryType="cq:PageContent"
-        sling:resourceType="healthcheck/components/healthcheck"/>
+    <jcr:content jcr:primaryType="cq:PageContent"
+    	sling:resourceType="healthcheck/components/healthcheck"/>
 </jcr:root>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:primaryType="cq:Dialog"
+    activeTab="0"
+    xtype="dialog">
+    <items jcr:primaryType="cq:WidgetCollection">
+		<vipEnabled
+			jcr:primaryType="cq:Widget"
+			fieldDescription="Press + to add more Server Entries. Checked Servers are enabled."
+			fieldLabel="AEM VIP Enabled Toggle"
+			hideLabel="true"
+			name="./vipEnabled"
+			width="1000"
+			xtype="multifield">
+				<fieldConfig
+					jcr:primaryType="cq:Widget"
+					xtype="multifieldserverentry"/>
+				<listeners
+					jcr:primaryType="nt:unstructured" />
+		</vipEnabled>
+    </items>
+</jcr:root>

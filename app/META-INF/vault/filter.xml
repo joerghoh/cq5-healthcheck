@@ -6,5 +6,6 @@
 		<exclude pattern="/content" />
 	</filter>
 	<filter root="/etc/statuspage"></filter>
+	<filter root="/etc/designs/healthcheck"></filter>
 	<filter root="/home/users/h/healthcheck"></filter>
 </workspaceFilter>
