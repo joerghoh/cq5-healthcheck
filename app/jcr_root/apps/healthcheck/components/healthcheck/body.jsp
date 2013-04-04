@@ -61,11 +61,8 @@
          
     pageContext.setAttribute("systemStatus", systemStatus);
 %>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>cq5-healthcheck</title>
-    <style media="screen" type="text/css">
+<body>
+	<style media="screen" type="text/css">
     	td.status {
     		text-align: center;
     	}
@@ -79,8 +76,6 @@
             background-color: green;
         }
     </style>
-</head>
-<body>
     <h1>Overview <%=request.getServerName() %></h1>
     <p><b>Overall Status:</b> ${systemStatus.status}</p>
     <c:if test="${not empty systemStatus.message}">
@@ -103,4 +98,3 @@
         </c:forEach>
     </table>
 </body>
-</html>

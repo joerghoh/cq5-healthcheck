@@ -4,5 +4,5 @@
     <allow
         jcr:primaryType="rep:GrantACE"
         rep:principalName="healthcheck"
-        rep:privileges="{Name}[jcr:all]"/>
+        rep:privileges="{Name}[jcr:read]"/>
 </jcr:root>
