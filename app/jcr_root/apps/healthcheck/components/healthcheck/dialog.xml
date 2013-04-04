@@ -9,11 +9,11 @@
             <items jcr:primaryType="cq:WidgetCollection">
                 <basic
                     jcr:primaryType="cq:Widget"
-                    path="/libs/foundation/components/page/tab_basic.infinity.json"
+                    path="/apps/healthcheck/components/healthcheck/tab_basic.infinity.json"
                     xtype="cqinclude"/>
-                <advanced
+                <categories
                     jcr:primaryType="cq:Widget"
-                    path="/libs/foundation/components/page/tab_advanced.infinity.json"
+                    path="/apps/healthcheck/components/healthcheck/tab_categories.infinity.json"
                     xtype="cqinclude"/>
             </items>
         </tabs>
