@@ -19,7 +19,7 @@
  * under the License.
  */
  --%>
-<%@page import="de.joerghoh.cq5.healthcheck.*,java.util.List" session="false"%>
+<%@page import="de.joerghoh.cq5.healthcheck.*,java.util.List,org.apache.commons.lang3.StringEscapeUtils" session="false"%>
 <%@include file="/libs/foundation/global.jsp"%>
 <%-- CQ5 health check component. --%>
 <%
@@ -30,7 +30,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>cq5-healthcheck</title>
+    <title><%= currentPage.getTitle() == null ? StringEscapeUtils.escapeHtml4(currentPage.getName()) : StringEscapeUtils.escapeHtml4(currentPage.getTitle()) %></title>
+    
     <style media="screen" type="text/css">
     	td.status {
     		text-align: center;
