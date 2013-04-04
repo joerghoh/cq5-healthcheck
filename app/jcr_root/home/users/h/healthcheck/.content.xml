@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:rep="internal"
+    jcr:mixinTypes="[rep:AccessControllable]"
+    jcr:primaryType="rep:User"
+    jcr:uuid="37c72e39-a9cb-38b7-964d-aac6411f404b"
+    rep:password="\{SHA-256}afbe07f7e3ea22a1-1000-1a1f9176e484933ee709169ece48d012e42caa4b204b4903cffcf9f293fb9ad6"
+    rep:principalName="healthcheck">
+    <profile
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="cq/security/components/profile"
+        familyName="Check"
+        givenName="Health"/>
+</jcr:root>

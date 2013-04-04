@@ -5,5 +5,6 @@
 		<exclude pattern="/apps/healthcheck/config*" />
 		<exclude pattern="/content" />
 	</filter>
-	<filter root="/content/statuspage"></filter>
+	<filter root="/etc/statuspage"></filter>
+	<filter root="/home/users/h/healthcheck"></filter>
 </workspaceFilter>
