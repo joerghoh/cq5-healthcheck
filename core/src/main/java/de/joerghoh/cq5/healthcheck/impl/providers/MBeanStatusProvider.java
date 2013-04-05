@@ -24,15 +24,15 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.ConfigurationPolicy;
 import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
-import org.apache.sling.commons.osgi.PropertiesUtil;
+import org.apache.sling.commons.osgi.OsgiUtil;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,9 +85,9 @@ public class MBeanStatusProvider implements StatusProvider {
 	protected void activate(ComponentContext ctx) throws RepositoryException {
 
 		Dictionary<?, ?> props = ctx.getProperties();
-		mbeanName = PropertiesUtil.toString(props.get(MBEAN_NAME), null);
-		properties = PropertiesUtil.toStringArray(props.get(MBEAN_PROPERTY));
-		providerHint = PropertiesUtil.toString(props.get(MBEAN_PROVIDER_HINT),
+		mbeanName = OsgiUtil.toString(props.get(MBEAN_NAME), null);
+		properties = OsgiUtil.toStringArray(props.get(MBEAN_PROPERTY));
+		providerHint = OsgiUtil.toString(props.get(MBEAN_PROVIDER_HINT),
 				null);
 
 		mbean = buildObjectName(mbeanName);
