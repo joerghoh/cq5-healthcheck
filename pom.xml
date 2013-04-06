@@ -59,6 +59,7 @@
 		<module>core</module>
 		<module>jmx-extensions</module>
 		<module>app</module>
+		<module>sample</module>
 	</modules>
 
 	<repositories>
