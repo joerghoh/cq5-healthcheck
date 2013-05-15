@@ -3,9 +3,26 @@ cq5-healthcheck
 
 This small project supports you when you need to monitor your CQ5 system. "Monitoring" means that an 
 automatic process checks CQ5 every few seconds (or minutes) if it is still fully functional. By default
-CQ5 does not have an endpoint, which offers that kind of information, so I created this project to provide them.
+CQ5 does not have an endpoint, which offers that kind of information, so I created this project to provide them. 
+This information can be consumed by both a automatic monitoring system (e.g. Nagios), but is also a big help for any person, which is supposed to run CQ5 instances.
+
+The projects consists of these elements:
+* A central HealthStatusService, which collects the status information of all registered StatusProviders
+* A MBeanStatusProvider factory, which allows to monitor MBeans
+* A CQ page component, which can display the current state fetched from the HealthStatusService
+
+You can implement arbitrary HealthStatusProviders to report the status of any module or subsystem, for example:
+
+* Connectivity to external systems is ok
+* The average response time to user requests is below a certain threshold
+* The error rate of user requests is below 0.001%
+* ...
+
+Currently only a small number of HealthStatusProviders is available.  In the bundle JMX extensions also a number of custom MBeans are contained; these can be used by the MBeanStatusProvider.
+
 
 This project is released under Apache License.
+
 
 Quick start
 ============
