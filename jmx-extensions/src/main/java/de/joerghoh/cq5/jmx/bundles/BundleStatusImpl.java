@@ -26,6 +26,8 @@ import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -58,6 +60,8 @@ import org.osgi.service.component.ComponentContext;
 	@Property(name = "jmx.objectname", value = "de.joerghoh.cq5.jmx:id=bundles", propertyPrivate=true) 
 })
 public class BundleStatusImpl implements BundleStatusMBean {
+	
+	Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Property(cardinality=Integer.MAX_VALUE, description="The symbolic name of bundles which should be ignored", label="Ignored bundles")
 	private final static String PROP_IGNORED_BUNDLES="ignoredBundles"; 
@@ -92,6 +96,9 @@ public class BundleStatusImpl implements BundleStatusMBean {
 	protected void activate(ComponentContext ctx) {
 		bctx = ctx.getBundleContext();
 		ignored_bundles = PropertiesUtil.toStringArray(ctx.getProperties().get(PROP_IGNORED_BUNDLES));
+		if (ignored_bundles != null ) {
+			log.info ("Ignoring bundles {}", ignored_bundles.toString());
+		}
 	
 	}
 
@@ -161,8 +168,11 @@ public class BundleStatusImpl implements BundleStatusMBean {
 	 * @return true if the bundle should be ignored
 	 */
 	private boolean isIgnored(Bundle b) {
+		if (ignored_bundles == null) {
+			return false;
+		}
 		String name = b.getSymbolicName();
-		for (int i=0; i<ignored_bundles.length;i++) {
+		for (int i=0; i< ignored_bundles.length;i++) {
 			String ignored = ignored_bundles[i];
 			if (ignored.equals(name)) {
 				return true;
