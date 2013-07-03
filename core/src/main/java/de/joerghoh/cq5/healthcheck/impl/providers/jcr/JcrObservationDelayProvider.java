@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 Jörg Hoh, Alexander Saar, Markus Haack
+ * 
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package de.joerghoh.cq5.healthcheck.impl.providers.jcr;
 
 import javax.jcr.Node;
@@ -26,6 +41,25 @@ import com.day.cq.commons.jcr.JcrUtil;
 import de.joerghoh.cq5.healthcheck.Status;
 import de.joerghoh.cq5.healthcheck.StatusCode;
 import de.joerghoh.cq5.healthcheck.StatusProvider;
+
+/**
+ * JCR Observation Delay Provider
+ * @author joerg@joerghoh.de (Jörg Hoh)
+ *
+ * This statusprovider delivers information about the current delay in the JCR observation
+ * mechanism.
+ * For this reason it creates nodes and measures the time the creation of the node and the time,
+ * when the creation event is finally delivered to this provider.
+ * This time isn't really accurate, as it also includes the saving of the session (which shouldn't be
+ * a really big problem, since the node is really small), but in any way it can give you indications
+ * about any delays causing problems with the processing of both JCR observation and Sling events.
+ * 
+ * A clear implementation should be placed into the JCR repository, which should annotate each event with
+ * a timestamp and measure the delay there.
+ * 
+ *
+ */
+
 
 @Component (immediate=true, metatype=true,description="JCR Observation Delay checker", label="JCR Observation Delay Checker")
 @Service
