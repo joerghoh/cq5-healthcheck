@@ -57,7 +57,7 @@ import de.joerghoh.cq5.healthcheck.StatusCode;
 @Service(value = javax.servlet.Servlet.class)
 @Properties({
 		@Property(name = "sling.servlet.methods", value = "GET", propertyPrivate=true),
-		@Property(name = "sling.servlet.paths", value = { "/bin/loadbalancer" }, propertyPrivate=true) 
+		@Property(name = "sling.servlet.paths", value = { "/apps/healthcheck/servlet/loadbalancer" }, propertyPrivate=true) 
 })
 public class LoadbalancerStatus extends SlingSafeMethodsServlet implements
 		ClusterAware {
