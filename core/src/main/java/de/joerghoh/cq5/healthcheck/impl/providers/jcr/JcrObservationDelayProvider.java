@@ -27,6 +27,7 @@ import javax.jcr.observation.EventListener;
 
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.ConfigurationPolicy;
 import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
@@ -63,7 +64,7 @@ import de.joerghoh.cq5.healthcheck.StatusProvider;
  *         which should annotate each event with a timestamp and measure the
  *         delay there.
  */
-@Component(immediate = true, metatype = true, description = "JCR Observation Delay checker", label = "JCR Observation Delay Checker")
+@Component(immediate = true, metatype = true, description = "JCR Observation Delay checker", label = "JCR Observation Delay Checker", policy = ConfigurationPolicy.REQUIRE)
 @Service
 public class JcrObservationDelayProvider implements EventListener,
 		StatusProvider {

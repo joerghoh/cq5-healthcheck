@@ -46,9 +46,9 @@ public class HealthStatusServiceImpl implements StatusService {
 	private final Logger log = LoggerFactory
 			.getLogger(HealthStatusServiceImpl.class);
 
-	private static int DEFAULT_NUMBER_BUNDLES = 10;
+	private static final int DEFAULT_NUMBER_BUNDLES = 0;
 
-	@Property(value = "10", label = "Number of healthcheck providers", description = "If the number of active healthchecks is not identical to this number you'll get warnings")
+	@Property(intValue = DEFAULT_NUMBER_BUNDLES, label = "Number of healthcheck providers", description = "If the number of active healthchecks is not identical to this number you'll get warnings")
 	private static String BUNDLE_NUMBER_THRESHOLD_PROP = "bundle.threshold";
 	private int bundleNumberThreshold;
 

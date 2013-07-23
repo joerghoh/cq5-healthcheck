@@ -55,10 +55,10 @@
 				<artifactId>content-package-maven-plugin</artifactId>
 				<extensions>true</extensions>
 				<configuration>
-					<name>cq5-healthcheck-sample</name>
+					<name>cq5-healthcheck-sample-content</name>
 					<description>${project.description}</description>
 					<group>Healthcheck</group>
-					<finalName>cq5-healthcheck-sample-${project.version}</finalName>
+					<finalName>cq5-healthcheck-sample-content-${project.version}</finalName>
 				</configuration>
 			</plugin>
 		</plugins>
