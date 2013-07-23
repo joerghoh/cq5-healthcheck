@@ -15,6 +15,8 @@
  */
 package de.joerghoh.cq5.healthcheck.impl.providers.jcr;
 
+import java.util.Dictionary;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -66,8 +68,12 @@ import de.joerghoh.cq5.healthcheck.StatusProvider;
 public class JcrObservationDelayProvider implements EventListener,
 		StatusProvider {
 
-	Logger log = LoggerFactory.getLogger(this.getClass());
+	private Logger log = LoggerFactory.getLogger(this.getClass());
 
+	@Property
+	private static String CATEGORY = "provider.category";
+	private String category;
+	
 	private static final long DEFAULT_DELAY_WARN = 500;
 	@Property(longValue = DEFAULT_DELAY_WARN, label = "threshold for WARN", description = "Threshold to reach WARN level in miliseconds")
 	private static final String DELAY_WARN = "delay.warn";
@@ -99,14 +105,12 @@ public class JcrObservationDelayProvider implements EventListener,
 	@Activate
 	protected void activate(ComponentContext ctx) {
 		Session readWriteSession = null;
-		delayWarn = PropertiesUtil.toLong(ctx.getProperties().get(DELAY_WARN),
-				DEFAULT_DELAY_WARN);
-		delayCritical = PropertiesUtil
-				.toLong(ctx.getProperties().get(DELAY_CRITICAL),
-						DEFAULT_DELAY_CRITICAL);
-		schedulingInterval = PropertiesUtil.toLong(
-				ctx.getProperties().get(SCHEDULING_INTERVAL),
-				DEFAULT_SCHEDULING_INTERVAL);
+		
+		Dictionary<?, ?> props = ctx.getProperties();
+		delayWarn = PropertiesUtil.toLong(props.get(DELAY_WARN), DEFAULT_DELAY_WARN);
+		delayCritical = PropertiesUtil.toLong(props.get(DELAY_CRITICAL), DEFAULT_DELAY_CRITICAL);
+		schedulingInterval = PropertiesUtil.toLong(props.get(SCHEDULING_INTERVAL), DEFAULT_SCHEDULING_INTERVAL);
+		category = PropertiesUtil.toString(props.get(CATEGORY), null);
 
 		try {
 			readWriteSession = repo.loginAdministrative(null);
@@ -214,6 +218,9 @@ public class JcrObservationDelayProvider implements EventListener,
 		}
 	}
 
+	/**
+	 * @see de.joerghoh.cq5.healthcheck.StatusProvider#getStatus()
+	 */
 	public Status getStatus() {
 		StatusCode sc = StatusCode.OK;
 		if (lastDelay > delayCritical) {
@@ -226,6 +233,13 @@ public class JcrObservationDelayProvider implements EventListener,
 
 		Status status = new Status(sc, message, provider);
 		return status;
+	}
+	
+	/**
+	 * @see de.joerghoh.cq5.healthcheck.StatusProvider#getCategory()
+	 */
+	public String getCategory() {
+		return category != null ? category : DEFAULT_CATEGORY;
 	}
 
 	/**

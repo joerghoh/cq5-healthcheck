@@ -26,7 +26,15 @@
 <%-- CQ5 health check component. --%>
 <%
     StatusService status = sling.getService(StatusService.class);
-    Status systemStatus = status.getStatus();
+    Status systemStatus = null;
+		 
+	String[] categories = properties.get("categories", String[].class);
+	int bundleNumberThreshold = properties.get("bundleNumberThreshold", 0);
+	if (bundleNumberThreshold > 0) {
+		systemStatus = status.getStatus(categories, bundleNumberThreshold);
+	} else {
+		systemStatus = status.getStatus(categories);
+	}	 
     pageContext.setAttribute("systemStatus", systemStatus);
 %>
 <!DOCTYPE html>
