@@ -5,6 +5,6 @@
     ranking="{Long}100">
     <jcr:content
         jcr:primaryType="cq:PageContent"
-        jcr:title="Health Status"
+        jcr:title="Full Status"
         sling:resourceType="healthcheck/components/healthcheck"/>
 </jcr:root>
