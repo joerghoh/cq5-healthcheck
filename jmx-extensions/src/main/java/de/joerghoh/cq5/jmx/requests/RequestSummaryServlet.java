@@ -22,6 +22,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -38,7 +39,11 @@ import org.slf4j.LoggerFactory;
  */
 @Component
 @Service
-@Property(name = "sling.servlet.paths", value = "/bin/requestinfo.json")
+@Properties({
+	@Property(name = "sling.servlet.methods", value = "GET", propertyPrivate=true),
+	@Property(name = "sling.servlet.selectors", value = "json", propertyPrivate=true),
+	@Property(name = "sling.servlet.resourceTypes", value = "healthcheck/servlet/requestinfo", propertyPrivate=true) 
+})
 public class RequestSummaryServlet extends SlingAllMethodsServlet {
 
 	private static final long serialVersionUID = 4721202027009891341L;
