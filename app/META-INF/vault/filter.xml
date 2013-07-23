@@ -3,6 +3,5 @@
 	<filter root="/apps/healthcheck">
 		<exclude pattern="^.*/rep:accessControl" />
 		<exclude pattern="/apps/healthcheck/config*" />
-		<exclude pattern="/content" />
 	</filter>
 </workspaceFilter>
