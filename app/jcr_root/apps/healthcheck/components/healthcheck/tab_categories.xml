@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Panel"
+    title="Categories">
+    <items jcr:primaryType="cq:WidgetCollection">
+        <title
+            jcr:primaryType="cq:Widget"
+            fieldLabel="Bundle Threshold Overwrite"
+            name="./bundleNumberThreshold"
+            xtype="numberfield"/>
+        <categories
+            jcr:primaryType="cq:Widget"
+            fieldLabel="Provider Categories"
+            name="./categories"
+            xtype="multifield">
+            <fieldConfig
+                jcr:primaryType="nt:unstructured"
+                allowBlank="{Boolean}false"
+                xtype="textfield"/>
+        </categories>
+    </items>
+</jcr:root>

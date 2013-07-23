@@ -22,8 +22,6 @@ import org.apache.felix.scr.annotations.Service;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
-
-
 @Component(
 		immediate=true,
 		metatype=true,
@@ -45,22 +43,21 @@ import org.osgi.service.event.EventHandler;
 public class OsgiEventCounter implements OsgiEventCounterMBean, EventHandler {
 
 	long totalCounter = 0;
-	
+
 	// Resource Events
 	// TODO make events configurable??
-	
+
 	private static String SLING_RESOURCE_EVENTS = "org/apache/sling/api/resource/Resource";
 	long resourceCounter = 0;
-	
+
 	// Replication Events
 	private static String REPLICATION_EVENTS = "com/day/cq/replication/job/publish/";
 	long replicationEventCounter = 0;
-	
+
 	// OSGI related events (bundles, components, services)
 	private static String OSGI_EVENTS = "org/osgi/framework/";
 	long osgiEventCounter = 0;
-	
-	
+
 	public void handleEvent(Event event) {
 		totalCounter++;
 		String topic = event.getTopic();
@@ -73,13 +70,12 @@ public class OsgiEventCounter implements OsgiEventCounterMBean, EventHandler {
 		if (topic.startsWith(OSGI_EVENTS)) {
 			osgiEventCounter++;
 		}
-		
+
 	}
-	
+
 	public long getTotalEventCounter() {
 		return totalCounter;
 	}
-
 
 	public long getResourceEventCounter() {
 		return resourceCounter;

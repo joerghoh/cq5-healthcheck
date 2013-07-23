@@ -56,7 +56,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Bundle-Category>custom</Bundle-Category>
+						<Bundle-Category>Healthcheck</Bundle-Category>
 						<Include-Resource>
 							{maven-resources}
 						</Include-Resource>
