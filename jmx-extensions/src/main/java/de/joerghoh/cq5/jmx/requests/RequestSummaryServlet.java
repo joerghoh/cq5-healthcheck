@@ -54,6 +54,7 @@ public class RequestSummaryServlet extends SlingAllMethodsServlet {
 	public void doGet(SlingHttpServletRequest request,
 			SlingHttpServletResponse response) {
 
+		response.setContentType("application/json");
 		MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
 		ObjectName query;
