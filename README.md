@@ -3,10 +3,11 @@ cq5-healthcheck
 
 This small project supports you when you need to monitor your CQ5 system. "Monitoring" means that an 
 automatic process checks CQ5 every few seconds (or minutes) if it is still fully functional. By default
-CQ5 does not have an endpoint, which offers that kind of information, so I created this project to provide them. 
+CQ5 does not have an endpoint which offers that kind of information, so I created this project to provide them. 
 This information can be consumed by both a automatic monitoring system (e.g. Nagios), but is also a big help for any person, which is supposed to run CQ5 instances.
 
 The projects consists of these elements:
+
 * A central HealthStatusService, which collects the status information of all registered StatusProviders
 * A MBeanStatusProvider factory, which allows to monitor MBeans
 * A CQ page component, which can display the current state fetched from the HealthStatusService
@@ -18,7 +19,7 @@ You can implement arbitrary HealthStatusProviders to report the status of any mo
 * The error rate of user requests is below 0.001%
 * ...
 
-Currently only a small number of HealthStatusProviders is available.  In the bundle JMX extensions also a number of custom MBeans are contained; these can be used by the MBeanStatusProvider.
+Currently only a small number of HealthStatusProviders is available. In the bundle JMX extensions also a number of custom MBeans are contained; these can be used by the MBeanStatusProvider.
 
 
 This project is released under Apache License.
@@ -27,9 +28,11 @@ This project is released under Apache License.
 Quick start
 ============
 
-* Build the package using "mvn package", you'll find a CQ5 package in apps/target/ 
-* Install it in CQ5
-* Open the /content/statuspage.html page to find an example of a health status page.
+* Build the package using `mvn clean package`. This will create two CQ5 packages:
+    * `/app/target/cq5-healthcheck-1.0.1-SNAPSHOT.zip`, and
+    * `/sample-content/target/cq5-healthcheck-sample-content-1.0.1-SNAPSHOT.zip`
+* Install the packages in CQ5
+* Open the `/etc/healthstatus/fullstatus.html` page to find an example of a health status page.
 
 
 Example config
@@ -55,11 +58,11 @@ warning. Use CRXDE (Lite) for this:
 * Save
 
 Note: 
-* You can also use a node type of "sling:OsgiConfig" and add each line as a separate property; the part before the equal sign "=" will be the property name, 
+* You can also use a node type of `sling:OsgiConfig` and add each line as a separate property; the part before the equal sign "=" will be the property name, 
   the remaining part the value. 
 * In the method described here you need to escape the " (double quote) and the ´=´ (equal sign) by a backslash (´\´)
 
-When you reload your statuspage, you should see an additional entry with the mbean name "com.adobe.granite.replication:type=agent,id="publish1""
+When you reload your status page, you should see an additional entry with the mbean name "com.adobe.granite.replication:type=agent,id="publish1""
 and status "OK", if the queue size of this replication agent is smaller than 100.
 
 
@@ -89,15 +92,25 @@ Currently the following comparator functions are supported:
 * "equals" (equals for string comparison)
 * "notequals" (non-equality for string comparison)
 
-The statuspage
+The status pages
 ================
 
-By default this project ships with a statuspage in /content/statuspage.html; it displays
+By default this project ships with two status pages in `/etc/healthstatus`:
 
-* an overall status
-* individual status information for each available mbean
+* `/etc/healthstatus/fullstatus.html`
+* `/etc/healthstatus/replication-status.html`
+
+`fullstatus.html` displays:
+
+* An overall status
+* Individual status information for each available mbean
+
+`replication-status.html` displays:
+
+* The replication status
 
 The overall status is composed the individual status informations like this:
+
 * If at least one mbean returns "WARN", and no mbean returns "CRITICAL", the overall status is "WARN".
 * If at least one mbean returns "CRITICAL", the overall status is "CRITICAL".
 * If all mbeans return "OK", the overall status is "OK".
@@ -107,9 +120,5 @@ There is an additional condition:
 * If there are less mbeans available than configured in the property "bundle.threshold" (service "HealthCheck service"),
   the overall status is "CRITICAL".
   
-This reflects a situation, where bundles are not loaded and therefor mbeans and their checks are not available. 
+This reflects a situation, where bundles are not loaded and therefore mbeans and their checks are not available. 
 In most cases this occurs during startup time and will go away, when all bundles activated and their services are running.
-  
-
-
-
