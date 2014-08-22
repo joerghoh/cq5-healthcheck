@@ -1,3 +1,14 @@
+
+Important Nodes
+===============
+I abandoned this project in favor of Sling Healthchecks (http://sling.apache.org/documentation/bundles/sling-health-check-tool.html), which offers far more features than my project. So the purpose of this project (demonstrating the need for healthchecks in the product) is fulfilled, and I thank Bertrand Delacretaz to taking up this idea.
+
+I will leave this project open on github, but please do not use it anymore.
+
+Kind regards,
+Jörg
+
+
 cq5-healthcheck
 ===============
 
