@@ -54,10 +54,10 @@ import de.joerghoh.cq5.healthcheck.StatusCode;
  * @author joerg
  */
 @Component(immediate = true, metatype = true, label="Loadbalancer director service", description="Service managing the loadbalancer based on the healtchechk data ")
-@Service(value = javax.servlet.Servlet.class)
+@Service(value = {javax.servlet.Servlet.class, com.day.cq.jcrclustersupport.ClusterAware.class})
 @Properties({
 		@Property(name = "sling.servlet.methods", value = "GET", propertyPrivate=true),
-		@Property(name = "sling.servlet.paths", value = { "/bin/loadbalancer" }, propertyPrivate=true) 
+		@Property(name = "sling.servlet.resourceTypes", value = "healthcheck/servlet/loadbalancer", propertyPrivate=true) 
 })
 public class LoadbalancerStatus extends SlingSafeMethodsServlet implements
 		ClusterAware {

@@ -46,6 +46,10 @@
 			<groupId>com.day.cq.wcm</groupId>
 			<artifactId>cq-wcm-api</artifactId>
 		</dependency>
+		<dependency>
+            <groupId>com.day.cq</groupId>
+            <artifactId>cq-commons</artifactId>
+        </dependency>
 
 		<!-- add additional dependencies here -->
 
@@ -86,6 +90,10 @@
 			<artifactId>org.apache.sling.jcr.api</artifactId>
 		</dependency>
 		<dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.commons.scheduler</artifactId>
+        </dependency>
+		<dependency>
 			<groupId>com.day.cqse</groupId>
 			<artifactId>cqse-httpservice</artifactId>
 		</dependency>
@@ -112,7 +120,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Bundle-Category>custom</Bundle-Category>
+						<Bundle-Category>Healthcheck</Bundle-Category>
 						<Include-Resource>
 							{maven-resources}
 						</Include-Resource>
