@@ -31,7 +31,7 @@
 	<groupId>de.joerghoh.cq5.healthcheck</groupId>
 	<artifactId>reactor</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.2-SNAPSHOT</version>
 
 	<name>CQ5 - Health Check - Reactor</name>
 	<description>Pseudo project to build the complete Health Check project</description>
