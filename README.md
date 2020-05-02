@@ -60,7 +60,7 @@ warning. Use CRXDE (Lite) for this:
   appropriate structure to hold OSGI config data (including combining with
   runmodes, etc...)
 * Create a nt:file node with the name "de.joerghoh.cq5.healthcheck.impl.providers.MBeanStatusProvider-publish1_queue_warn.config
-* Add a line 'mbean.name="com.adobe.granite.type:type\=agent,id\=\"publish1\""' (without the single quotes)
+* Add a line 'mbean.name="com.adobe.granite.replication:type\=agent,id\=\"publish1\""' (without the single quotes)
 * Add a line 'mbean.property="QueueNumEntries.warn.>.100"' (without the single quotes)
 * Add a line 'mbean.providerHint="Warn on queue length"' (without the single quotes)
 * Save
